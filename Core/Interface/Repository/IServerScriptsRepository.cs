@@ -4,7 +4,7 @@ namespace InfraBot.Core.Interface.Repository;
 
 internal interface IServerScriptsRepository
 {
-    Task AddAsync(ServerScripts entity, CancellationToken cancellationToken = default);
-    Task UpdateAsync(ServerScripts entity, CancellationToken cancellationToken = default);
-    Task<ServerScripts?> GetAsync(Guid id, CancellationToken cancellationToken = default);
+    Task AddAsync(ServerScripts serverScripts, CancellationToken ct);
+    Task UpdateAsync(ServerScripts serverScripts, CancellationToken ct);
+    Task<ServerScripts?> GetAsync(Guid id, CancellationToken ct);
 }

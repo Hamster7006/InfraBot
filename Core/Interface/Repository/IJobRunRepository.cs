@@ -4,7 +4,7 @@ namespace InfraBot.Core.Interface.Repository;
 
 internal interface IJobRunRepository
 {
-    Task AddAsync(JobRun entity, CancellationToken cancellationToken = default);
-    Task UpdateAsync(JobRun entity, CancellationToken cancellationToken = default);
-    Task<JobRun?> GetAsync(Guid id, CancellationToken cancellationToken = default);
+    Task AddAsync(JobRun jobRun, CancellationToken ct);
+    Task UpdateAsync(JobRun jobRun, CancellationToken ct);
+    Task<JobRun?> GetAsync(Guid id, CancellationToken ct);
 }

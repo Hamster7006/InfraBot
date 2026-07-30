@@ -9,6 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="ZZZOtherData\**" />
+    <EmbeddedResource Remove="ZZZOtherData\**" />
+    <None Remove="ZZZOtherData\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="C:\Users\Alkesandr\AppData\Local\Temp\cursor-sandbox-cache\e8bc6d7cfdf1fe5a88f3cef76289b688\nuget\linq2db.postgresql\6.3.0\contentFiles\any\any\LinqToDB.Templates\CopyMe.PostgreSQL.tt.txt" />
     <None Remove="C:\Users\Alkesandr\AppData\Local\Temp\cursor-sandbox-cache\e8bc6d7cfdf1fe5a88f3cef76289b688\nuget\linq2db.postgresql\6.3.0\contentFiles\any\any\LinqToDB.Templates\DataAnnotations.ttinclude" />
     <None Remove="C:\Users\Alkesandr\AppData\Local\Temp\cursor-sandbox-cache\e8bc6d7cfdf1fe5a88f3cef76289b688\nuget\linq2db.postgresql\6.3.0\contentFiles\any\any\LinqToDB.Templates\DataModel.ttinclude" />
@@ -37,9 +43,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="OtherData\Data\**\*.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <Folder Include="DataBaseCore\" />
+    <Folder Include="Infrastracture\Repository\Files\" />
+    <Folder Include="Infrastracture\Repository\DB\" />
+    <Folder Include="Infrastracture\Services\" />
+    <Folder Include="Scenarios\Tasks\" />
   </ItemGroup>
 
 </Project>
