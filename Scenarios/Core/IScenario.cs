@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Telegram.Bot;
+using Telegram.Bot.Types;
 
-namespace InfraBot.Scenarios.Core
+namespace InfraBot.Scenarios.Core;
+
+public interface IScenario
 {
-    public interface IScenario
-    {
-        bool CanHandle(ScenarioType scenario);
-        Task<ScenarioResult> HandleMessageAsync(ITelegramBotClient bot, ScenarioContext context, Update update, CancellationToken ct);
-    }
+    bool CanHandle(ScenarioType scenario);
+    Task<ScenarioResult> HandleMessageAsync(ITelegramBotClient bot, ScenarioContext context, Update update, CancellationToken ct);
 }

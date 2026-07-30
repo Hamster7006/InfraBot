@@ -1,7 +1,8 @@
 internal class Program
 {
-    private static void Main(string[] args)
+    private static async Task Main(string[] args)
     {
-        Console.WriteLine("InfraBot");
+        var bot = new InfraBot.TelegramBot.TelegrammBotInit();
+        await bot.StartTelegrammBotInitAsync();
     }
 }

@@ -1,4 +1,3 @@
-using System.Text.Json.Serialization;
 using InfraBot.Enums;
 
 namespace InfraBot.Entities;
@@ -17,22 +16,27 @@ public class BotUser
     /// <summary>Username в Telegram (@name), может быть пустым.</summary>
     public string? Username { get; set; }
 
-    /// <summary>Статус учётной записи.</summary>
+    /// <summary>Текущая роль учётной записи.</summary>
     public UserStatus Status { get; set; }
+
+    /// <summary>Есть ли активный запрос на повышение роли.</summary>
+    public UserPending Pending { get; set; }
 
     /// <summary>Дата и время регистрации (UTC).</summary>
     public DateTime CreatedAt { get; set; }
 
-    /// <summary>Связки пользователя с серверами и скриптами (BotUser 1:N ServerScript).</summary>
-    public List<Guid> AccessServerScriptsIds { get; set; }
+    public BotUser()
+    {
+        Pending = UserPending.None;
+    }
 
     public BotUser(long telegramId, string telegramUserName)
     {
         Id = Guid.NewGuid();
         Status = UserStatus.Guest;
+        Pending = UserPending.None;
         Username = telegramUserName;
         TelegramId = telegramId;
         CreatedAt = DateTime.UtcNow;
-        AccessServerScriptsIds = new List<Guid>();
     }
 }

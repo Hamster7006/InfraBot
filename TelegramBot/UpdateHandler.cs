@@ -25,7 +25,9 @@ namespace InfraBot.TelegramBot
         {
             throw new NotImplementedException();
         }
-
+        public async Task OnMessage(Update update, Message message, CancellationToken cancellationToken)
+        {
+        }
         public async Task OnCallbackQuery(Update update, CallbackQuery callbackQuery, CancellationToken ct)
         {
         }

@@ -1,9 +1,8 @@
-using System.Text.Json.Serialization;
-
 namespace InfraBot.Entities;
 
 /// <summary>
 /// PowerShell-скрипт. Может возвращать результат в формате JSON.
+/// Имя уникально в рамках глобального каталога.
 /// </summary>
 public class Script
 {
@@ -36,18 +35,13 @@ public class Script
 
     /// <summary>Идентификатор Admin, создавшего скрипт (FK → BotUser).</summary>
     public Guid CreatedById { get; set; }
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="user">ID пользователя</param>
-    /// <param name="name">Имя скрипта</param>
-    /// <param name="content">Тело скрипта</param>
-    /// <param name="description">Описание</param>
-    public Script(Guid user,
-                  string name,
-                  string? content,
-                  string? description
-    )
+
+    public Script()
+    {
+        Name = string.Empty;
+    }
+
+    public Script(Guid createdById, string name, string? content, string? description)
     {
         Id = Guid.NewGuid();
         IsEnabled = false;
@@ -55,7 +49,7 @@ public class Script
         RequiresConfirmation = false;
         TimeoutSeconds = 120;
         CreatedAt = DateTime.UtcNow;
-        CreatedById = user;
+        CreatedById = createdById;
         Content = content;
         Name = name;
         Description = description;

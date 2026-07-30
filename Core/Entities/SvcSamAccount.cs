@@ -1,23 +1,27 @@
-﻿using System.Security;
-using System.Text.Json.Serialization;
-
-namespace InfraBot.Entities;
+﻿namespace InfraBot.Entities;
 
 /// <summary>
 /// Учётная запись домена для WinRM-подключения к серверу.
-/// Server 1:1 ServerSamAccountUser.
+/// Server N:1 SvcSamAccount.
 /// </summary>
-internal class SvcSamAccount
+public class SvcSamAccount
 {
     /// <summary>Уникальный идентификатор записи.</summary>
-    internal Guid Id { get; set; }
+    public Guid Id { get; set; }
 
     /// <summary>Имя учётной записи в домене (sAMAccountName).</summary>
-    internal string SamAccountName { get; set; }
+    public string SamAccountName { get; set; }
 
-    /// <summary>Пароль.</summary>
-    internal string Password { get; set; }
-    internal SvcSamAccount(string samAccountName, string password)
+    /// <summary>Пароль (для demo-хранилища; в production — Secret Manager).</summary>
+    public string Password { get; set; }
+
+    public SvcSamAccount()
+    {
+        SamAccountName = string.Empty;
+        Password = string.Empty;
+    }
+
+    public SvcSamAccount(string samAccountName, string password)
     {
         Id = Guid.NewGuid();
         SamAccountName = samAccountName;

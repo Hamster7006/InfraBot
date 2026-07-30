@@ -1,4 +1,3 @@
-using System.Text.Json.Serialization;
 using InfraBot.Enums;
 
 namespace InfraBot.Entities;
@@ -16,6 +15,9 @@ public class JobRun
 
     /// <summary>Результат выполнения скрипта в формате JSON.</summary>
     public string? ResultJson { get; set; }
+
+    /// <summary>Текст ошибки при Status = Failed.</summary>
+    public string? ErrorMessage { get; set; }
 
     /// <summary>Код завершения процесса PowerShell.</summary>
     public int? ExitCode { get; set; }
@@ -37,19 +39,19 @@ public class JobRun
 
     /// <summary>Идентификатор пользователя, инициировавшего запуск (FK → BotUser).</summary>
     public Guid InitiatedById { get; set; }
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="script">ID Скрипта</param>
-    /// <param name="server">ID сервера</param>
-    /// <param name="initiatedBy">ID запустившего</param>
-    public JobRun(Guid script, Guid server, Guid initiatedBy)
+
+    public JobRun()
+    {
+    }
+
+    /// <summary>Создаёт задачу в статусе Queued.</summary>
+    public JobRun(Guid scriptId, Guid serverId, Guid initiatedById)
     {
         Id = Guid.NewGuid();
         Status = JobRunStatus.Queued;
         CreatedAt = DateTime.UtcNow;
-        ScriptId = script;
-        ServerId = server;
-        InitiatedById = initiatedBy;
+        ScriptId = scriptId;
+        ServerId = serverId;
+        InitiatedById = initiatedById;
     }
 }

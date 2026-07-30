@@ -1,4 +1,4 @@
-using System.Text.Json.Serialization;
+using InfraBot.Enums;
 
 namespace InfraBot.Entities;
 
@@ -28,7 +28,24 @@ public class Server
     /// <summary>Порт WinRM: 5985 (HTTP) или 5986 (HTTPS).</summary>
     public int WinRmPort { get; set; }
 
-    public Guid? SvcSamAccount {  get; set; }
+    /// <summary>Идентификатор учётной записи службы для WinRM (FK → SvcSamAccount).</summary>
+    public Guid? SvcSamAccountId { get; set; }
+
+    /// <summary>
+    /// Скрипты, привязанные к серверу: ID скрипта → минимальная роль для запуска.
+    /// </summary>
+    public Dictionary<Guid, UserStatus> ScriptRequirements { get; set; }
+
+    /// <summary>Пользователи, которым выдан доступ к серверу (FK → BotUser).</summary>
+    public List<Guid> GrantedUserIds { get; set; }
+
+    public Server()
+    {
+        ServerName = string.Empty;
+        ServerFQDN = string.Empty;
+        ScriptRequirements = [];
+        GrantedUserIds = [];
+    }
 
     public Server(string name, string hostname, Guid user)
     {
@@ -38,5 +55,7 @@ public class Server
         ServerFQDN = hostname;
         WinRmPort = 5986;
         IsEnabled = false;
+        ScriptRequirements = [];
+        GrantedUserIds = [];
     }
 }
