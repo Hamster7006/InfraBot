@@ -361,3 +361,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# InfraBot — локальные данные и вспомогательные файлы (не в репозитории)
+OtherData/

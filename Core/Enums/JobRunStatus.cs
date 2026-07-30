@@ -1,4 +1,4 @@
-namespace InfraBot.Entities.Enums;
+namespace InfraBot.Enums;
 
 /// <summary>
 /// Статус выполнения задачи (запуска скрипта).
