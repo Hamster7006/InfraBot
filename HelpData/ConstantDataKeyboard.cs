@@ -1,4 +1,4 @@
-﻿using InfraBot.Entities;
+using InfraBot.Entities;
 using InfraBot.Enums;
 using System;
 using System.Collections.Generic;
@@ -38,7 +38,7 @@ namespace InfraBot.HelpData
 
                 case UserStatus.Admin:
                     keyboard.AddNewRow([ListServers, ListScripts, UserControl]);
-                    keyboard.AddNewRow([PendingRequests]);
+                    keyboard.AddNewRow([PendingRequests, AddServer]);
                     break;
             }
 

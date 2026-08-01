@@ -4,17 +4,12 @@ using InfraBot.Entities;
 using InfraBot.Enums;
 using InfraBot.HelpData;
 using InfraBot.Infrastracture.Services;
-using InfraBot.TestData;
-using System;
 using System.Threading;
 using Telegram.Bot;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
-using static InfraBot.TelegramBot.TelegrammBotInit;
-using static LinqToDB.Common.Configuration;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace InfraBot.TelegramBot;
 
@@ -37,23 +32,22 @@ internal class UpdateHandler : IUpdateHandler
     ISvcSamAccountService _svcAccountsService;
 
 
-    public UpdateHandler(ITelegramBotClient telegramBotClient, int data)
+    public UpdateHandler(ITelegramBotClient telegramBotClient, int data, CancellationToken ct)
     {
         //_botUsersService = botUsers;
         _telegramBotClient = telegramBotClient;
 
         var constantDataGenerateRandom = new ConstantDataGenerateRandom();
-        (   IBotUserRepository botUserRepository, 
-            IServerRepository serverRepository, 
-            IScriptRepository scriptRepository, 
-            IJobRunRepository jobRunRepository, 
+        (   IBotUserRepository botUserRepository,
+            IServerRepository serverRepository,
+            IScriptRepository scriptRepository,
+            IJobRunRepository jobRunRepository,
             ISvcSamAccountRepository svcRepository) = constantDataGenerateRandom.SwitchMemory(data);
         _serverRepository = serverRepository;
         _scriptRepository = scriptRepository;
         _botUserRepository = botUserRepository;
         _jobRunRepository = jobRunRepository;
         _svcRepository = svcRepository;
-
 
         _botUsersService = new BotUserService(_botUserRepository);
         _serversService = new ServerService(_serverRepository);
@@ -112,11 +106,11 @@ internal class UpdateHandler : IUpdateHandler
             await _telegramBotClient.SendMessage(chatId, "Вы заблокировны.", cancellationToken: ct);
             return;
         }
-        else if(_userData == null)
-        {
-            await _telegramBotClient.SendMessage(chatId, $"Для запуска бота введите '{ConstantData.Start}'", replyMarkup: _replyKeyboardMarkup, cancellationToken: ct);
-            return;
-        }
+        //else if(_userData == null)
+        //{
+        //    //await _telegramBotClient.SendMessage(chatId, , cancellationToken: ct);
+        //    return;
+        //}
 
         //_replyKeyboardMarkup = ConstantData.CreateReplyKeyboardMarkup(_userData);
 
@@ -137,8 +131,8 @@ internal class UpdateHandler : IUpdateHandler
                 }
                 break;
             case ConstantData.Pending:
-                if (_userData == null) break;
-                if (ConstantData.CommandsDictionary[$"{text}"].Levels.Contains(_userData.Status))
+                if (CheckAnonimus(_userData, chatId, _replyKeyboardMarkup, ct)) break;
+                if (!ConstantData.CommandsDictionary[$"{text}"].Levels.Contains(_userData.Status))
                 {
                     SendErrorComand(chatId, text,_userData,_replyKeyboardMarkup,ct);
                     break;
@@ -150,8 +144,8 @@ internal class UpdateHandler : IUpdateHandler
                 break;
 
             case ConstantData.ListServers:
-                if (_userData == null) break;
-                if (ConstantData.CommandsDictionary[$"{text}"].Levels.Contains(_userData.Status))
+                if (CheckAnonimus(_userData,chatId, _replyKeyboardMarkup, ct)) break;
+                if (!ConstantData.CommandsDictionary[$"{text}"].Levels.Contains(_userData.Status))
                 {
                     SendErrorComand(chatId, text, _userData, _replyKeyboardMarkup, ct);
                     break;
@@ -162,8 +156,8 @@ internal class UpdateHandler : IUpdateHandler
                 break;
 
             case ConstantData.ListScripts:
-                if (_userData == null) break;
-                if (ConstantData.CommandsDictionary[$"{text}"].Levels.Contains(_userData.Status))
+                if (CheckAnonimus(_userData, chatId, _replyKeyboardMarkup, ct)) break;
+                if (!ConstantData.CommandsDictionary[$"{text}"].Levels.Contains(_userData.Status))
                 {
                     SendErrorComand(chatId, text, _userData, _replyKeyboardMarkup, ct);
                     break;
@@ -174,8 +168,8 @@ internal class UpdateHandler : IUpdateHandler
                 break;
 
             case ConstantData.PendingRequests:
-                if (_userData == null) break;
-                if (ConstantData.CommandsDictionary[$"{text}"].Levels.Contains(_userData.Status))
+                if (CheckAnonimus(_userData, chatId, _replyKeyboardMarkup, ct)) break;
+                if (!ConstantData.CommandsDictionary[$"{text}"].Levels.Contains(_userData.Status))
                 {
                     SendErrorComand(chatId, text, _userData, _replyKeyboardMarkup, ct);
                     break;
@@ -186,8 +180,8 @@ internal class UpdateHandler : IUpdateHandler
                 break;
 
             case ConstantData.AddServer:
-                if (_userData == null) break;
-                if (ConstantData.CommandsDictionary[$"{text}"].Levels.Contains(_userData.Status))
+                if (CheckAnonimus(_userData, chatId, _replyKeyboardMarkup, ct)) break;
+                if (!ConstantData.CommandsDictionary[$"{text}"].Levels.Contains(_userData.Status))
                 {
                     SendErrorComand(chatId, text, _userData, _replyKeyboardMarkup, ct);
                     break;
@@ -252,7 +246,7 @@ internal class UpdateHandler : IUpdateHandler
     {
         _telegramBotClient.SendMessage( chat,
                                         ConstantData.ReplaceText(
-                                            $"Команда '{text}' не найдена. Доступные команды:\r\n {ConstantData.HelpData}",
+                                            $"Команда '{text}' не найдена. Доступные команды:\r\n {ConstantData.HelpData(userData)}",
                                             userData
                                         ),
                                         replyMarkup: replyKeyboardMarkup,
@@ -260,4 +254,32 @@ internal class UpdateHandler : IUpdateHandler
                                         );
     }
 
+    internal bool CheckAnonimus(BotUser userData, Chat chat, ReplyKeyboardMarkup replyKeyboardMarkup, CancellationToken се)
+    {
+        if (userData == null)
+        {
+            _telegramBotClient.SendMessage(chat,
+                                        $"Для запуска бота введите '{ConstantData.Start}'", replyMarkup: replyKeyboardMarkup,
+                                        cancellationToken: се);
+            return true;
+        }
+        return false;
+    }
+
+
+
+
+  
+    internal async Task LoadTestDataAsync(int data, CancellationToken ct)
+    {
+        await new ConstantDataGenerateRandom().GenerateTempData(
+            data,
+            _botUsersService,
+            _botUserRepository,
+            _serverRepository,
+            _scriptRepository,
+            _jobRunRepository,
+            _svcRepository,
+            ct);
+    }
 }

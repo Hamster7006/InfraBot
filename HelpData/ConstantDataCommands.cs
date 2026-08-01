@@ -46,6 +46,11 @@ internal partial class ConstantData
             Description = "Добавление сервера",
             Levels = [UserStatus.Admin]
         },
+        [UserControl] = new CommndsData
+        {
+            Description = "Управление пользователями",
+            Levels = [UserStatus.Admin]
+        },
     };
 
     

@@ -1,11 +1,17 @@
-﻿using InfraBot.Core.Interface.Repository;
+using InfraBot.Core.Exceptions;
+using InfraBot.Core.Interface.Repository;
 using InfraBot.Core.Interface.Services;
 using InfraBot.Entities;
 using InfraBot.Enums;
 using InfraBot.HelpData;
 using InfraBot.Infrastracture.Services;
+using InfraBot.Scenarios.Core;
 using InfraBot.TestData;
 using System.Text.Json;
+using Telegram.Bot;
+using Telegram.Bot.Polling;
+using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 
 namespace InfraBot.TelegramBot;
 
@@ -82,6 +88,92 @@ internal class TelegrammBotInit
         #endregion
 
         #region Запуск Telegram-бота
+        try
+        {
+            using var cancellationTokenSource = new CancellationTokenSource();
+            var botClient = new TelegramBotClient(Config.Token);
+            var receiverOptions = new ReceiverOptions
+            {
+                AllowedUpdates = new UpdateType[]
+                {
+                        UpdateType.Message, //сообщение
+                        //UpdateType.InlineQuery, // Запрос?
+                        //UpdateType.ChosenInlineResult, // Запрос?
+                        UpdateType.CallbackQuery, // клавиатура в сообщении
+                        UpdateType.EditedMessage, // отредактированное сообщение
+                                                  //UpdateType.ChannelPost, // пост в канале
+                                                  //UpdateType.EditedChannelPost, // пост в канале отредактированный
+                                                  //UpdateType.ShippingQuery, //??
+                                                  //UpdateType.PreCheckoutQuery,//??
+                                                  //UpdateType.Poll,
+                                                  //UpdateType.PollAnswer,
+                                                  //UpdateType.MyChatMember,
+                                                  //UpdateType.ChatMember,
+                                                  //UpdateType.ChatJoinRequest,
+                                                  //UpdateType.MessageReaction, // реакция на соообщение
+                                                  //UpdateType.MessageReactionCount, // Счетчик реакций на сообщение
+                                                  //UpdateType.ChatBoost, // буст канала
+                                                  //UpdateType.RemovedChatBoost, // Отключение буста
+                                                  //UpdateType.BusinessConnection,//??
+                                                  //UpdateType.BusinessMessage,//??
+                                                  //UpdateType.EditedBusinessMessage,//??
+                                                  //UpdateType.DeletedBusinessMessages,//??
+                                                  //UpdateType.PurchasedPaidMedia,//??
+                                                  //UpdateType.ManagedBot,//??
+                                                  //UpdateType.GuestMessage,//??
+                }
+
+                ,
+                DropPendingUpdates = true
+            };
+
+
+            // Создаем список команд
+            var commands = new List<BotCommand>{};
+            foreach (var key in ConstantData.CommandsDictionary.Keys)
+                commands.Add(
+                        new BotCommand { 
+                                Command = $"{key.Replace("/", "")}", 
+                                Description = $"{ConstantData.CommandsDictionary[key].Description}" 
+                        }
+                    );
+            // Устанавливаем команды
+            await botClient.SetMyCommands(commands);
+            var handler = new UpdateHandler(botClient, data, ct);
+            await handler.LoadTestDataAsync(data, ct);
+            botClient.StartReceiving(handler, receiverOptions, cancellationTokenSource.Token);
+
+            var me = await botClient.GetMe();
+            Console.WriteLine($"{me.FirstName} запущен!");
+            Console.WriteLine($"Нажмите клавишу A для выхода.");
+            await Task.Run(() =>
+            {
+                while (true)
+                {
+                    var key = Console.ReadKey(true);
+                    if (key.Key == ConsoleKey.A)
+                    {
+                        cancellationTokenSource.Cancel();
+                        Console.WriteLine("Bot stopping...");
+                        break;
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Id телеграм бота: {me.Id}.");
+                    }
+                }
+            });
+
+            await Task.Delay(-1); // Устанавливаем бесконечную задержку.
+        }
+        catch (InfraBotException ex)
+        {
+            Console.WriteLine("Произошла непредвиденная ошибка: ");
+            Console.WriteLine($"Type of exception: {ex.GetType()}");
+            Console.WriteLine($"Message: {ex.Message}");
+            Console.WriteLine($"StackTrace: {ex.StackTrace}");
+            Console.WriteLine($"InnerException: {ex.InnerException}");
+        }
         await Task.CompletedTask;
         #endregion
     }
