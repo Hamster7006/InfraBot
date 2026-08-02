@@ -10,8 +10,11 @@
 
   <ItemGroup>
     <Compile Remove="ZZZOtherData\**" />
+    <Compile Remove="!TESTDATA\**" />
     <EmbeddedResource Remove="ZZZOtherData\**" />
+    <EmbeddedResource Remove="!TESTDATA\**" />
     <None Remove="ZZZOtherData\**" />
+    <None Remove="!TESTDATA\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -70,7 +73,6 @@
     <Folder Include="DataBaseCore\" />
     <Folder Include="Infrastracture\Repository\DB\" />
     <Folder Include="Infrastracture\Services\" />
-    <Folder Include="Scenarios\Tasks\" />
   </ItemGroup>
 
 </Project>

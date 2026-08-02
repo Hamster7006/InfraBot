@@ -13,4 +13,7 @@ public interface IBotUserService
     Task ApproveElevationAsync(Guid userId, CancellationToken ct);
     Task RejectElevationAsync(Guid userId, CancellationToken ct);
     Task<IReadOnlyList<BotUser>> GetPendingElevationRequestsAsync(CancellationToken ct);
+
+    /// <summary>Все пользователи — для списка /usercontrol.</summary>
+    Task<IReadOnlyList<BotUser>> GetAllUsersAsync(CancellationToken ct);
 }

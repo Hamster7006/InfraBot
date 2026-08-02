@@ -10,4 +10,5 @@ internal interface IServerRepository
     Task<Server?> GetAsync(string name, CancellationToken ct);
     Task<IReadOnlyList<Server>> GetAllAsync(CancellationToken ct);
     Task<bool> ExistsByNameAsync(string name, CancellationToken ct);
+    Task DeleteAsync(Guid id, CancellationToken ct);
 }

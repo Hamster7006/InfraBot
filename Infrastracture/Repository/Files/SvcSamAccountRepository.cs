@@ -1,5 +1,4 @@
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using InfraBot.Core.Interface.Repository;
 using InfraBot.Entities;
 
@@ -9,8 +8,7 @@ internal sealed class SvcSamAccountRepository : ISvcSamAccountRepository
 {
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        Converters = { new JsonStringEnumConverter() }
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
 
     private readonly string _filePath;
@@ -30,11 +28,17 @@ internal sealed class SvcSamAccountRepository : ISvcSamAccountRepository
     public Task UpdateAsync(SvcSamAccount svc, CancellationToken ct)
         => UpdateItemAsync(svc, x => x.Id == svc.Id, ct);
 
+    public Task DeleteAsync(Guid id, CancellationToken ct)
+        => DeleteItemAsync(x => x.Id == id, ct);
+
     public async Task<SvcSamAccount?> GetAsync(Guid id, CancellationToken ct)
     {
         var items = await ReadAllAsync(ct);
         return items.FirstOrDefault(x => x.Id == id);
     }
+
+    public async Task<IReadOnlyList<SvcSamAccount>> GetAllAsync(CancellationToken ct)
+        => await ReadAllAsync(ct);
 
     private async Task<List<SvcSamAccount>> ReadAllAsync(CancellationToken ct)
     {
@@ -74,6 +78,24 @@ internal sealed class SvcSamAccountRepository : ISvcSamAccountRepository
                 throw new KeyNotFoundException("Запись для обновления не найдена.");
 
             items[index] = item;
+            await WriteAllUnlockedAsync(items, ct);
+        }
+        finally
+        {
+            _lock.Release();
+        }
+    }
+
+    private async Task DeleteItemAsync(Predicate<SvcSamAccount> match, CancellationToken ct)
+    {
+        await _lock.WaitAsync(ct);
+        try
+        {
+            var items = await ReadAllUnlockedAsync(ct);
+            var removed = items.RemoveAll(x => match(x));
+            if (removed == 0)
+                throw new KeyNotFoundException("Запись для удаления не найдена.");
+
             await WriteAllUnlockedAsync(items, ct);
         }
         finally

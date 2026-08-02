@@ -6,7 +6,6 @@ using InfraBot.Enums;
 using InfraBot.HelpData;
 using InfraBot.Infrastracture.Services;
 using InfraBot.Scenarios.Core;
-using InfraBot.TestData;
 using System.Text.Json;
 using Telegram.Bot;
 using Telegram.Bot.Polling;
@@ -17,7 +16,7 @@ namespace InfraBot.TelegramBot;
 
 internal class TelegrammBotInit
 {
-    private static readonly int data = 0; // позже убрать
+    private static readonly int data = 1; // позже убрать
 
     public ConfigData Config { get; private set; } = null!;
 
@@ -101,29 +100,27 @@ internal class TelegrammBotInit
                         //UpdateType.ChosenInlineResult, // Запрос?
                         UpdateType.CallbackQuery, // клавиатура в сообщении
                         UpdateType.EditedMessage, // отредактированное сообщение
-                                                  //UpdateType.ChannelPost, // пост в канале
-                                                  //UpdateType.EditedChannelPost, // пост в канале отредактированный
-                                                  //UpdateType.ShippingQuery, //??
-                                                  //UpdateType.PreCheckoutQuery,//??
-                                                  //UpdateType.Poll,
-                                                  //UpdateType.PollAnswer,
-                                                  //UpdateType.MyChatMember,
-                                                  //UpdateType.ChatMember,
-                                                  //UpdateType.ChatJoinRequest,
-                                                  //UpdateType.MessageReaction, // реакция на соообщение
-                                                  //UpdateType.MessageReactionCount, // Счетчик реакций на сообщение
-                                                  //UpdateType.ChatBoost, // буст канала
-                                                  //UpdateType.RemovedChatBoost, // Отключение буста
-                                                  //UpdateType.BusinessConnection,//??
-                                                  //UpdateType.BusinessMessage,//??
-                                                  //UpdateType.EditedBusinessMessage,//??
-                                                  //UpdateType.DeletedBusinessMessages,//??
-                                                  //UpdateType.PurchasedPaidMedia,//??
-                                                  //UpdateType.ManagedBot,//??
-                                                  //UpdateType.GuestMessage,//??
-                }
-
-                ,
+                        //UpdateType.ChannelPost, // пост в канале
+                        //UpdateType.EditedChannelPost, // пост в канале отредактированный
+                        //UpdateType.ShippingQuery, //??
+                        //UpdateType.PreCheckoutQuery,//??
+                        //UpdateType.Poll,
+                        //UpdateType.PollAnswer,
+                        //UpdateType.MyChatMember,
+                        //UpdateType.ChatMember,
+                        //UpdateType.ChatJoinRequest,
+                        //UpdateType.MessageReaction, // реакция на соообщение
+                        //UpdateType.MessageReactionCount, // Счетчик реакций на сообщение
+                        //UpdateType.ChatBoost, // буст канала
+                        //UpdateType.RemovedChatBoost, // Отключение буста
+                        //UpdateType.BusinessConnection,//??
+                        //UpdateType.BusinessMessage,//??
+                        //UpdateType.EditedBusinessMessage,//??
+                        //UpdateType.DeletedBusinessMessages,//??
+                        //UpdateType.PurchasedPaidMedia,//??
+                        //UpdateType.ManagedBot,//??
+                        //UpdateType.GuestMessage,//?? 
+                },
                 DropPendingUpdates = true
             };
 
@@ -139,8 +136,13 @@ internal class TelegrammBotInit
                     );
             // Устанавливаем команды
             await botClient.SetMyCommands(commands);
-            var handler = new UpdateHandler(botClient, data, ct);
-            await handler.LoadTestDataAsync(data, ct);
+
+            IEnumerable<IScenario> scenarios = new List<IScenario>();
+            var scenarioContextRepository = new InMemoryScenarioContextRepository();
+
+            var handler = new UpdateHandler(botClient, data, scenarios, scenarioContextRepository, cancellationTokenSource.Token);
+            //await handler.LoadTestDataAsync(data, ct);
+            
             botClient.StartReceiving(handler, receiverOptions, cancellationTokenSource.Token);
 
             var me = await botClient.GetMe();

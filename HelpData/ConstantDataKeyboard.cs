@@ -1,48 +1,70 @@
 using InfraBot.Entities;
 using InfraBot.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using InfraBot.Scenarios.Tasks.User;
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace InfraBot.HelpData
+namespace InfraBot.HelpData;
+
+internal partial class ConstantData
 {
-    internal partial class ConstantData
+    internal static ReplyKeyboardMarkup CreateReplyKeyboardMarkup(BotUser? user)
     {
-        internal static ReplyKeyboardMarkup CreateReplyKeyboardMarkup(BotUser? user)
+        var keyboard = new ReplyKeyboardMarkup { ResizeKeyboard = true };
+
+        if (user == null)
         {
-            var keyboard = new ReplyKeyboardMarkup { ResizeKeyboard = true };
-
-            if (user == null)
-            {
-                keyboard.AddNewRow([Start]);
-                return keyboard;
-            }
-
-            switch (user.Status)
-            {
-                case UserStatus.Guest:
-                    keyboard.AddNewRow([Pending]);
-                    break;
-
-                case UserStatus.Operator:
-                    keyboard.AddNewRow([ListServers]);
-                    keyboard.AddNewRow([Pending]);
-                    break;
-
-                case UserStatus.MainOperator:
-                    keyboard.AddNewRow([ListServers]);
-                    break;
-
-                case UserStatus.Admin:
-                    keyboard.AddNewRow([ListServers, ListScripts, UserControl]);
-                    keyboard.AddNewRow([PendingRequests, AddServer]);
-                    break;
-            }
-
+            keyboard.AddNewRow([Start]);
             return keyboard;
         }
+
+        switch (user.Status)
+        {
+            case UserStatus.Guest:
+                keyboard.AddNewRow([Pending]);
+                keyboard.AddNewRow([Help, Info]);
+                break;
+
+            case UserStatus.Operator:
+                keyboard.AddNewRow([ListServers]);
+                keyboard.AddNewRow([Report]);
+                keyboard.AddNewRow([Help, Info, Report]);
+                break;
+
+            case UserStatus.Admin:
+                keyboard.AddNewRow([ListServers]);
+                keyboard.AddNewRow([CreateColorControlButton(KeyboardButtonStyle.Danger, AdminControl)]);
+                keyboard.AddNewRow([Help, Info, Report]);
+                break;
+        }
+
+        return keyboard;
     }
+
+    /// <summary>Клавиатура админ-модуля (после /admincontrol).</summary>
+    internal static ReplyKeyboardMarkup CreateAdminModuleKeyboard()
+    {
+        var keyboard = new ReplyKeyboardMarkup { ResizeKeyboard = true };
+        keyboard.AddNewRow([AddServer, ListServers]);
+        keyboard.AddNewRow([AddScript, ListScripts]);
+        keyboard.AddNewRow([AddSvcAccount, ListSvcAccounts]);
+        keyboard.AddNewRow([PendingRequests, UserControl, ReportAll]);
+        keyboard.AddNewRow([CreateColorControlButton(KeyboardButtonStyle.Danger, Cancel)]);
+        return keyboard;
+    }
+
+    internal static ReplyKeyboardMarkup CreateCancelKeyboard()
+    {
+        var keyboard = new ReplyKeyboardMarkup { ResizeKeyboard = true };
+        keyboard.AddNewRow([CreateColorControlButton(KeyboardButtonStyle.Danger, Cancel)]);
+        return keyboard;
+    }
+
+    internal static KeyboardButton CreateColorControlButton(KeyboardButtonStyle keyboardButtonStyle, string command)
+    {
+        var button = new KeyboardButton(command);
+        button.Style = keyboardButtonStyle;
+        return button;
+    }
+
 }
+

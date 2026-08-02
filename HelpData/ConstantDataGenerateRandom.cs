@@ -1,8 +1,5 @@
 ﻿using InfraBot.Core.Interface.Repository;
-using InfraBot.Core.Interface.Services;
 using InfraBot.Enums;
-using InfraBot.Infrastracture.Services;
-using InfraBot.TestData;
 
 namespace InfraBot.HelpData;
 
@@ -23,15 +20,6 @@ internal class ConstantDataGenerateRandom
         ISvcSamAccountRepository svcRepository = null!;
         switch (data)
         {
-            case 0:
-            {
-                botUserRepository = new Infrastracture.Repository.Memory.BotUserRepository();
-                serverRepository = new Infrastracture.Repository.Memory.ServerRepository();
-                scriptRepository = new Infrastracture.Repository.Memory.ScriptRepository();
-                jobRunRepository = new Infrastracture.Repository.Memory.JobRunRepository();
-                svcRepository = new Infrastracture.Repository.Memory.SvcSamAccountRepository();
-                break;
-            }
             case 1:
             {
                 botUserRepository = new Infrastracture.Repository.Files.BotUserRepository(RepositoryPaths.BotUsers);
@@ -51,43 +39,5 @@ internal class ConstantDataGenerateRandom
         }
 
         return (botUserRepository, serverRepository, scriptRepository, jobRunRepository, svcRepository);
-    }
-
-    internal async Task<IBotUserService> GenerateTempData(
-        int data,
-        IBotUserService botUsersService,
-        IBotUserRepository botUserRepository,
-        IServerRepository serverRepository,
-        IScriptRepository scriptRepository,
-        IJobRunRepository jobRunRepository,
-        ISvcSamAccountRepository svcSamAccountRepository,
-        CancellationToken ct)
-    {
-        var testDataStorage = data switch
-        {
-            0 => TestDataStorageKind.Memory,
-            1 => TestDataStorageKind.Files,
-            _ => TestDataStorageKind.Memory
-        };
-
-        var testDataManager = new TestDataManager(new TestDataLoadOptions
-        {
-            Storage = testDataStorage,
-            DataRootPath = "Data",
-            ClearExisting = true,
-            BotUserRepository = botUserRepository,
-            ServerRepository = serverRepository,
-            ScriptRepository = scriptRepository,
-            JobRunRepository = jobRunRepository,
-            SvcSamAccountRepository = svcSamAccountRepository
-        });
-
-        await testDataManager.GenerateAndLoadAsync(ct);
-
-        var owner = await botUsersService.RegisterUserAsync(578566515, "Mad163Hamster", ct);
-        if (owner.Status != UserStatus.Admin)
-            await botUsersService.SetUserStatusAsync(owner.Id, UserStatus.Admin, ct);
-
-        return botUsersService;
     }
 }

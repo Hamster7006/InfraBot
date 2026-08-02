@@ -1,5 +1,4 @@
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using InfraBot.Core.Interface.Repository;
 using InfraBot.Entities;
 
@@ -9,8 +8,7 @@ internal sealed class JobRunRepository : IJobRunRepository
 {
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        Converters = { new JsonStringEnumConverter() }
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
 
     private readonly string _folderPath;
@@ -22,9 +20,9 @@ internal sealed class JobRunRepository : IJobRunRepository
         Directory.CreateDirectory(_folderPath);
     }
 
-    public async Task<JobRun> CreateAsync(BotUser user, Script script, Server server, CancellationToken ct)
+    public async Task<JobRun> CreateAsync(BotUser user, Script script, Server server, long chatId, CancellationToken ct)
     {
-        var jobRun = new JobRun(script.Id, server.Id, user.Id);
+        var jobRun = new JobRun(script.Id, server.Id, user.Id, chatId);
         await AddItemAsync(jobRun, ct);
         return jobRun;
     }
@@ -36,6 +34,14 @@ internal sealed class JobRunRepository : IJobRunRepository
     {
         var items = await ReadAllAsync(ct);
         return items.FirstOrDefault(x => x.Id == id);
+    }
+
+    public async Task<IReadOnlyList<JobRun>> ReportAsync(bool allJobs, BotUser user, CancellationToken ct)
+    {
+        var items = await ReadAllAsync(ct);
+        return allJobs
+            ? items
+            : items.Where(x => x.InitiatedById == user.Id).ToList();
     }
 
     public async Task<IReadOnlyList<JobRun>> GetByIdsUserOrServer(Guid? userId, Guid? serverId, CancellationToken ct)
@@ -66,6 +72,44 @@ internal sealed class JobRunRepository : IJobRunRepository
                 x.ServerId == serverId &&
                 (!userId.HasValue || x.InitiatedById == userId.Value))
             .ToList();
+    }
+
+    public async Task DeleteByServerIdAsync(Guid serverId, CancellationToken ct)
+    {
+        await _lock.WaitAsync(ct);
+        try
+        {
+            var items = await ReadAllUnlockedAsync(ct);
+            foreach (var job in items.Where(x => x.ServerId == serverId))
+            {
+                var path = GetFilePath(job.Id);
+                if (File.Exists(path))
+                    File.Delete(path);
+            }
+        }
+        finally
+        {
+            _lock.Release();
+        }
+    }
+
+    public async Task DeleteByScriptIdAsync(Guid scriptId, CancellationToken ct)
+    {
+        await _lock.WaitAsync(ct);
+        try
+        {
+            var items = await ReadAllUnlockedAsync(ct);
+            foreach (var job in items.Where(x => x.ScriptId == scriptId))
+            {
+                var path = GetFilePath(job.Id);
+                if (File.Exists(path))
+                    File.Delete(path);
+            }
+        }
+        finally
+        {
+            _lock.Release();
+        }
     }
 
     private async Task<List<JobRun>> ReadAllAsync(CancellationToken ct)
@@ -128,9 +172,9 @@ internal sealed class JobRunRepository : IJobRunRepository
             await using var stream = File.OpenRead(path);
             var item = await JsonSerializer.DeserializeAsync<JobRun>(stream, JsonOptions, ct);
             if (item is not null)
-                result.Add(item);
+                if (item.CreatedAt >= DateTime.Now.AddDays(-7))
+                    result.Add(item);
         }
-
         return result;
     }
 

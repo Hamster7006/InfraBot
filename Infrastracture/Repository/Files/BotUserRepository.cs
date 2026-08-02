@@ -1,5 +1,4 @@
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using InfraBot.Core.Interface.Repository;
 using InfraBot.Entities;
 
@@ -9,8 +8,7 @@ internal sealed class BotUserRepository : IBotUserRepository
 {
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        Converters = { new JsonStringEnumConverter() }
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
 
     private readonly string _filePath;

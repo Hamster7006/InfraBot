@@ -12,7 +12,7 @@ public class SvcSamAccount
     /// <summary>Имя учётной записи в домене (sAMAccountName).</summary>
     public string SamAccountName { get; set; }
 
-    /// <summary>Пароль (для demo-хранилища; в production — Secret Manager).</summary>
+    /// <summary>Пароль</summary>
     public string Password { get; set; }
 
     public SvcSamAccount()

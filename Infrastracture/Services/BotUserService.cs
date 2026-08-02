@@ -36,10 +36,12 @@ internal sealed class BotUserService : IBotUserService
     {
         var user = await GetUserOrThrow(userId, ct);
         user.Status = status;
+        // Смена роли закрывает активную заявку на повышение
         user.Pending = UserPending.None;
         await _users.UpdateUserAsync(user, ct);
     }
 
+    /// <summary>Ставит заявку в очередь без уведомлений — только флаг Pending.</summary>
     public async Task RequestElevationAsync(Guid userId, CancellationToken ct)
     {
         var user = await GetUserOrThrow(userId, ct);
@@ -83,8 +85,12 @@ internal sealed class BotUserService : IBotUserService
         return all.Where(x => x.Pending == UserPending.Pending).ToList();
     }
 
+    /// <inheritdoc />
+    public Task<IReadOnlyList<BotUser>> GetAllUsersAsync(CancellationToken ct)
+        => _users.GetAllAsync(ct);
+
     /// <summary>
-    /// Целевая роль при Pending = Pending: Guest → Operator, Operator → MainOperator.
+    /// Целевая роль при Pending = Pending: Guest → Operator.
     /// </summary>
     private static UserStatus? ResolveElevationTarget(BotUser user)
     {
@@ -98,7 +104,6 @@ internal sealed class BotUserService : IBotUserService
         current switch
         {
             UserStatus.Guest => UserStatus.Operator,
-            UserStatus.Operator => UserStatus.MainOperator,
             _ => null
         };
 

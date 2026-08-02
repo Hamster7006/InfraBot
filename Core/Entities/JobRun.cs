@@ -40,12 +40,15 @@ public class JobRun
     /// <summary>Идентификатор пользователя, инициировавшего запуск (FK → BotUser).</summary>
     public Guid InitiatedById { get; set; }
 
+    /// <summary>Id чата Telegram для отправки результата выполнения.</summary>
+    public long ChatId { get; set; }
+
     public JobRun()
     {
     }
 
     /// <summary>Создаёт задачу в статусе Queued.</summary>
-    public JobRun(Guid scriptId, Guid serverId, Guid initiatedById)
+    public JobRun(Guid scriptId, Guid serverId, Guid initiatedById, long chatId)
     {
         Id = Guid.NewGuid();
         Status = JobRunStatus.Queued;
@@ -53,5 +56,6 @@ public class JobRun
         ScriptId = scriptId;
         ServerId = serverId;
         InitiatedById = initiatedById;
+        ChatId = chatId;
     }
 }

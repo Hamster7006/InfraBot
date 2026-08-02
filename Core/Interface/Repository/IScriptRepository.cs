@@ -9,4 +9,5 @@ internal interface IScriptRepository
     Task<Script?> GetAsync(Guid id, CancellationToken ct);
     Task<IReadOnlyList<Script>> GetAllAsync(CancellationToken ct);
     Task<bool> ExistsByNameAsync(string name, CancellationToken ct);
+    Task DeleteAsync(Guid id, CancellationToken ct);
 }

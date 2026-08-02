@@ -25,9 +25,6 @@ public class BotUser
     /// <summary>Дата и время регистрации (UTC).</summary>
     public DateTime CreatedAt { get; set; }
 
-    /// <summary>Комментарий по пользователю для Админа</summary>
-    public string? Description { get; set; }
-
     public BotUser()
     {
         Pending = UserPending.None;

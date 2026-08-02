@@ -1,5 +1,4 @@
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using InfraBot.Core.Interface.Repository;
 using InfraBot.Entities;
 
@@ -9,8 +8,7 @@ internal sealed class ScriptRepository : IScriptRepository
 {
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        Converters = { new JsonStringEnumConverter() }
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
 
     private readonly string _folderPath;
@@ -43,6 +41,9 @@ internal sealed class ScriptRepository : IScriptRepository
         return items.Any(x =>
             string.Equals(x.Name, name, StringComparison.OrdinalIgnoreCase));
     }
+
+    public Task DeleteAsync(Guid id, CancellationToken ct)
+        => DeleteItemAsync(x => x.Id == id, ct);
 
     private async Task<List<Script>> ReadAllAsync(CancellationToken ct)
     {
@@ -84,6 +85,26 @@ internal sealed class ScriptRepository : IScriptRepository
                 throw new KeyNotFoundException("Запись для обновления не найдена.");
 
             await WriteItemUnlockedAsync(item, ct);
+        }
+        finally
+        {
+            _lock.Release();
+        }
+    }
+
+    private async Task DeleteItemAsync(Predicate<Script> match, CancellationToken ct)
+    {
+        await _lock.WaitAsync(ct);
+        try
+        {
+            var items = await ReadAllUnlockedAsync(ct);
+            var script = items.FirstOrDefault(x => match(x));
+            if (script == null)
+                throw new KeyNotFoundException("Скрипт не найден.");
+
+            var path = GetFilePath(script.Id);
+            if (File.Exists(path))
+                File.Delete(path);
         }
         finally
         {

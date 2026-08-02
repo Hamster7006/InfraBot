@@ -1,5 +1,4 @@
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using InfraBot.Core.Interface.Repository;
 using InfraBot.Entities;
 
@@ -9,8 +8,7 @@ internal sealed class ServerRepository : IServerRepository
 {
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        Converters = { new JsonStringEnumConverter() }
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
 
     private readonly string _filePath;
@@ -53,6 +51,9 @@ internal sealed class ServerRepository : IServerRepository
             string.Equals(x.ServerName, name, StringComparison.OrdinalIgnoreCase));
     }
 
+    public Task DeleteAsync(Guid id, CancellationToken ct)
+        => DeleteItemAsync(x => x.Id == id, ct);
+
     private async Task<List<Server>> ReadAllAsync(CancellationToken ct)
     {
         await _lock.WaitAsync(ct);
@@ -91,6 +92,25 @@ internal sealed class ServerRepository : IServerRepository
                 throw new KeyNotFoundException("Запись для обновления не найдена.");
 
             items[index] = item;
+            await WriteAllUnlockedAsync(items, ct);
+        }
+        finally
+        {
+            _lock.Release();
+        }
+    }
+
+    private async Task DeleteItemAsync(Predicate<Server> match, CancellationToken ct)
+    {
+        await _lock.WaitAsync(ct);
+        try
+        {
+            var items = await ReadAllUnlockedAsync(ct);
+            var index = items.FindIndex(match);
+            if (index < 0)
+                throw new KeyNotFoundException("Сервер не найден.");
+
+            items.RemoveAt(index);
             await WriteAllUnlockedAsync(items, ct);
         }
         finally

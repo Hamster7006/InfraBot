@@ -16,16 +16,10 @@ public class Script
     public string? Description { get; set; }
 
     /// <summary>Текст PowerShell-скрипта.</summary>
-    public string? Content { get; set; }
-
-    /// <summary>Можно ли запускать скрипт.</summary>
-    public bool IsEnabled { get; set; }
+    public string Content { get; set; }
 
     /// <summary>Возвращаются ли данные в JSON.</summary>
     public bool ReturnData { get; set; }
-
-    /// <summary>Требовать подтверждение пользователя перед запуском.</summary>
-    public bool RequiresConfirmation { get; set; }
 
     /// <summary>Максимальное время выполнения в секундах.</summary>
     public int TimeoutSeconds { get; set; }
@@ -39,14 +33,13 @@ public class Script
     public Script()
     {
         Name = string.Empty;
+        Content = string.Empty;
     }
 
-    public Script(Guid createdById, string name, string? content, string? description)
+    public Script(Guid createdById, string name, string content, string? description)
     {
         Id = Guid.NewGuid();
-        IsEnabled = false;
         ReturnData = false;
-        RequiresConfirmation = false;
         TimeoutSeconds = 120;
         CreatedAt = DateTime.UtcNow;
         CreatedById = createdById;
