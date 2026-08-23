@@ -42,6 +42,7 @@ namespace InfraBot.TelegramBot
         public UpdateHandler(
             ITelegramBotClient telegramBotClient,
             int data,
+            string? connectionString,
             IEnumerable<IScenario> scenarios,
             IScenarioContextRepository scenarioContextRepository,
             CancellationToken ct)
@@ -55,7 +56,7 @@ namespace InfraBot.TelegramBot
                 IServerRepository serverRepository,
                 IScriptRepository scriptRepository,
                 IJobRunRepository jobRunRepository,
-                ISvcSamAccountRepository svcRepository) = constantDataGenerateRandom.SwitchMemory(data);
+                ISvcSamAccountRepository svcRepository) = constantDataGenerateRandom.SwitchMemory(data, connectionString);
             _serverRepository = serverRepository;
             _scriptRepository = scriptRepository;
             _botUserRepository = botUserRepository;

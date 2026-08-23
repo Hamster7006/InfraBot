@@ -16,7 +16,7 @@ namespace InfraBot.TelegramBot;
 
 internal class TelegrammBotInit
 {
-    private static readonly int data = 1; // позже убрать
+    private static readonly int data = 2; // позже убрать
 
     public ConfigData Config { get; private set; } = null!;
 
@@ -58,7 +58,7 @@ internal class TelegrammBotInit
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
         var configFilePath = pathInfo["config"].Path;
-        var defaultToken = new ConfigData().Token;
+        var defaultConfig = new ConfigData();
         ConfigData config;
 
         while (true)
@@ -68,17 +68,39 @@ internal class TelegrammBotInit
                 await using var stream = File.OpenRead(configFilePath);
                 config = JsonSerializer.Deserialize<ConfigData>(stream, JsonOptions) ?? new ConfigData();
 
-                if (!string.IsNullOrWhiteSpace(config.Token) && config.Token != defaultToken)
+                var tokenConfigured = !string.IsNullOrWhiteSpace(config.Token)
+                    && config.Token != defaultConfig.Token;
+                var connectionConfigured = data != 2
+                    || (!string.IsNullOrWhiteSpace(config.ConnectionString)
+                        && config.ConnectionString != defaultConfig.ConnectionString);
+
+                if (tokenConfigured && connectionConfigured)
                     break;
             }
+            else
+            {
+                config = new ConfigData();
+            }
 
-            config = new ConfigData();
             await File.WriteAllTextAsync(configFilePath, JsonSerializer.Serialize(config, JsonOptions), ct);
 
-            Console.WriteLine("Введите токен Telegram-бота:");
-            config.Token = Console.ReadLine()?.Trim() ?? string.Empty;
-            if (string.IsNullOrWhiteSpace(config.Token))
-                throw new InvalidOperationException("Токен Telegram-бота не указан.");
+            if (string.IsNullOrWhiteSpace(config.Token) || config.Token == defaultConfig.Token)
+            {
+                Console.WriteLine("Введите токен Telegram-бота:");
+                config.Token = Console.ReadLine()?.Trim() ?? string.Empty;
+                if (string.IsNullOrWhiteSpace(config.Token))
+                    throw new InvalidOperationException("Токен Telegram-бота не указан.");
+            }
+
+            if (data == 2
+                && (string.IsNullOrWhiteSpace(config.ConnectionString)
+                    || config.ConnectionString == defaultConfig.ConnectionString))
+            {
+                Console.WriteLine("Введите строку подключения к PostgreSQL:");
+                config.ConnectionString = Console.ReadLine()?.Trim() ?? string.Empty;
+                if (string.IsNullOrWhiteSpace(config.ConnectionString))
+                    throw new InvalidOperationException("Строка подключения к БД не указана.");
+            }
 
             await File.WriteAllTextAsync(configFilePath, JsonSerializer.Serialize(config, JsonOptions), ct);
         }
@@ -140,7 +162,13 @@ internal class TelegrammBotInit
             IEnumerable<IScenario> scenarios = new List<IScenario>();
             var scenarioContextRepository = new InMemoryScenarioContextRepository();
 
-            var handler = new UpdateHandler(botClient, data, scenarios, scenarioContextRepository, cancellationTokenSource.Token);
+            var handler = new UpdateHandler(
+                botClient,
+                data,
+                Config.ConnectionString,
+                scenarios,
+                scenarioContextRepository,
+                cancellationTokenSource.Token);
             //await handler.LoadTestDataAsync(data, ct);
             
             botClient.StartReceiving(handler, receiverOptions, cancellationTokenSource.Token);
@@ -183,6 +211,9 @@ internal class TelegrammBotInit
     public class ConfigData
     {
         public string Token { get; set; } = "0000000000:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+
+        public string ConnectionString { get; set; } =
+            "Host=localhost;Port=5432;Database=Infrabot;Username=postgres;Password=changeme";
     }
 }
 

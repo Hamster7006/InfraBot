@@ -1,5 +1,6 @@
 ﻿using InfraBot.Core.Interface.Repository;
-using InfraBot.Enums;
+using InfraBot.Infrastracture.DataAccess;
+using InfraBot.Infrastracture.Repository.DB;
 
 namespace InfraBot.HelpData;
 
@@ -11,7 +12,7 @@ internal class ConstantDataGenerateRandom
         IScriptRepository ScriptRepository,
         IJobRunRepository JobRunRepository,
         ISvcSamAccountRepository SvcRepository
-    ) SwitchMemory(int data)
+    ) SwitchMemory(int data, string? connectionString = null)
     {
         IBotUserRepository botUserRepository = null!;
         IServerRepository serverRepository = null!;
@@ -29,13 +30,17 @@ internal class ConstantDataGenerateRandom
                 svcRepository = new Infrastracture.Repository.Files.SvcSamAccountRepository(RepositoryPaths.SvcSamAccounts);
                 break;
             }
-            case 2: // бд
-                botUserRepository = null!;
-                serverRepository = null!;
-                scriptRepository = null!;
-                jobRunRepository = null!;
-                svcRepository = null!;
+            case 2:
+            {
+                var dataContextFactory = new DataContextFactory(connectionString!);
+                dataContextFactory.CreateDataContext();
+                botUserRepository = new SqlBotUserRepository(dataContextFactory);
+                serverRepository = new SqlServerRepository(dataContextFactory);
+                scriptRepository = new SqlScriptRepository(dataContextFactory);
+                jobRunRepository = new SqlJobRunRepository(dataContextFactory);
+                svcRepository = new SqlSvcSamAccountRepository(dataContextFactory);
                 break;
+            }
         }
 
         return (botUserRepository, serverRepository, scriptRepository, jobRunRepository, svcRepository);

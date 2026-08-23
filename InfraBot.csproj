@@ -64,12 +64,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Data\**\*.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="DataBaseCore\" />
     <Folder Include="Infrastracture\Repository\DB\" />
     <Folder Include="Infrastracture\Services\" />
