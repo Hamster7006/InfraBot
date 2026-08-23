@@ -1,10 +1,5 @@
 using InfraBot.Core.Exceptions;
-using InfraBot.Core.Interface.Repository;
-using InfraBot.Core.Interface.Services;
-using InfraBot.Entities;
-using InfraBot.Enums;
 using InfraBot.HelpData;
-using InfraBot.Infrastracture.Services;
 using InfraBot.Scenarios.Core;
 using System.Text.Json;
 using Telegram.Bot;
@@ -16,63 +11,38 @@ namespace InfraBot.TelegramBot;
 
 internal class TelegrammBotInit
 {
-    private static readonly int data = 2; // позже убрать
+    private const string ConfigFilePath = "config.json";
 
     public ConfigData Config { get; private set; } = null!;
 
     public async Task StartTelegrammBotInitAsync(CancellationToken ct = default)
     {
-        var pathInfo = new Dictionary<string, (string Path, bool IsFile)>
-        {
-            ["config"] = ("config.json", true),
-            ["botUsers"] = (RepositoryPaths.BotUsers, true),
-            ["servers"] = (RepositoryPaths.Servers, true),
-            ["scripts"] = (RepositoryPaths.ScriptsFolder, false),
-            ["jobRuns"] = (RepositoryPaths.JobRunsFolder, false),
-            ["svcSamAccounts"] = (RepositoryPaths.SvcSamAccounts, true),
-        };
+        var configDirectory = Path.GetDirectoryName(ConfigFilePath);
+        if (!string.IsNullOrEmpty(configDirectory) && !Directory.Exists(configDirectory))
+            Directory.CreateDirectory(configDirectory);
 
-        #region Проверка существование папок и файлов
-        foreach (var key in pathInfo.Keys)
-        {
-            var obj = pathInfo[key];
-            if (obj.IsFile)
-            {
-                var directory = Path.GetDirectoryName(obj.Path);
-                if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
-                    Directory.CreateDirectory(directory);
-
-                if (!File.Exists(obj.Path))
-                    File.Create(obj.Path).Dispose();
-            }
-            else if (!Directory.Exists(obj.Path))
-            {
-                Directory.CreateDirectory(obj.Path);
-            }
-        }
-        #endregion
+        if (!File.Exists(ConfigFilePath))
+            File.Create(ConfigFilePath).Dispose();
 
         #region Получение конфигурации
-        JsonSerializerOptions JsonOptions = new()
+        JsonSerializerOptions jsonOptions = new()
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
-        var configFilePath = pathInfo["config"].Path;
         var defaultConfig = new ConfigData();
         ConfigData config;
 
         while (true)
         {
-            if (File.Exists(configFilePath) && new FileInfo(configFilePath).Length > 0)
+            if (File.Exists(ConfigFilePath) && new FileInfo(ConfigFilePath).Length > 0)
             {
-                await using var stream = File.OpenRead(configFilePath);
-                config = JsonSerializer.Deserialize<ConfigData>(stream, JsonOptions) ?? new ConfigData();
+                await using var stream = File.OpenRead(ConfigFilePath);
+                config = JsonSerializer.Deserialize<ConfigData>(stream, jsonOptions) ?? new ConfigData();
 
                 var tokenConfigured = !string.IsNullOrWhiteSpace(config.Token)
                     && config.Token != defaultConfig.Token;
-                var connectionConfigured = data != 2
-                    || (!string.IsNullOrWhiteSpace(config.ConnectionString)
-                        && config.ConnectionString != defaultConfig.ConnectionString);
+                var connectionConfigured = !string.IsNullOrWhiteSpace(config.ConnectionString)
+                    && config.ConnectionString != defaultConfig.ConnectionString;
 
                 if (tokenConfigured && connectionConfigured)
                     break;
@@ -82,7 +52,7 @@ internal class TelegrammBotInit
                 config = new ConfigData();
             }
 
-            await File.WriteAllTextAsync(configFilePath, JsonSerializer.Serialize(config, JsonOptions), ct);
+            await File.WriteAllTextAsync(ConfigFilePath, JsonSerializer.Serialize(config, jsonOptions), ct);
 
             if (string.IsNullOrWhiteSpace(config.Token) || config.Token == defaultConfig.Token)
             {
@@ -92,9 +62,8 @@ internal class TelegrammBotInit
                     throw new InvalidOperationException("Токен Telegram-бота не указан.");
             }
 
-            if (data == 2
-                && (string.IsNullOrWhiteSpace(config.ConnectionString)
-                    || config.ConnectionString == defaultConfig.ConnectionString))
+            if (string.IsNullOrWhiteSpace(config.ConnectionString)
+                || config.ConnectionString == defaultConfig.ConnectionString)
             {
                 Console.WriteLine("Введите строку подключения к PostgreSQL:");
                 config.ConnectionString = Console.ReadLine()?.Trim() ?? string.Empty;
@@ -102,7 +71,7 @@ internal class TelegrammBotInit
                     throw new InvalidOperationException("Строка подключения к БД не указана.");
             }
 
-            await File.WriteAllTextAsync(configFilePath, JsonSerializer.Serialize(config, JsonOptions), ct);
+            await File.WriteAllTextAsync(ConfigFilePath, JsonSerializer.Serialize(config, jsonOptions), ct);
         }
 
         Config = config;
@@ -117,46 +86,22 @@ internal class TelegrammBotInit
             {
                 AllowedUpdates = new UpdateType[]
                 {
-                        UpdateType.Message, //сообщение
-                        //UpdateType.InlineQuery, // Запрос?
-                        //UpdateType.ChosenInlineResult, // Запрос?
-                        UpdateType.CallbackQuery, // клавиатура в сообщении
-                        UpdateType.EditedMessage, // отредактированное сообщение
-                        //UpdateType.ChannelPost, // пост в канале
-                        //UpdateType.EditedChannelPost, // пост в канале отредактированный
-                        //UpdateType.ShippingQuery, //??
-                        //UpdateType.PreCheckoutQuery,//??
-                        //UpdateType.Poll,
-                        //UpdateType.PollAnswer,
-                        //UpdateType.MyChatMember,
-                        //UpdateType.ChatMember,
-                        //UpdateType.ChatJoinRequest,
-                        //UpdateType.MessageReaction, // реакция на соообщение
-                        //UpdateType.MessageReactionCount, // Счетчик реакций на сообщение
-                        //UpdateType.ChatBoost, // буст канала
-                        //UpdateType.RemovedChatBoost, // Отключение буста
-                        //UpdateType.BusinessConnection,//??
-                        //UpdateType.BusinessMessage,//??
-                        //UpdateType.EditedBusinessMessage,//??
-                        //UpdateType.DeletedBusinessMessages,//??
-                        //UpdateType.PurchasedPaidMedia,//??
-                        //UpdateType.ManagedBot,//??
-                        //UpdateType.GuestMessage,//?? 
+                        UpdateType.Message,
+                        UpdateType.CallbackQuery,
+                        UpdateType.EditedMessage,
                 },
                 DropPendingUpdates = true
             };
 
-
-            // Создаем список команд
-            var commands = new List<BotCommand>{};
+            var commands = new List<BotCommand> { };
             foreach (var key in ConstantData.CommandsDictionary.Keys)
                 commands.Add(
-                        new BotCommand { 
-                                Command = $"{key.Replace("/", "")}", 
-                                Description = $"{ConstantData.CommandsDictionary[key].Description}" 
+                        new BotCommand
+                        {
+                            Command = $"{key.Replace("/", "")}",
+                            Description = $"{ConstantData.CommandsDictionary[key].Description}"
                         }
                     );
-            // Устанавливаем команды
             await botClient.SetMyCommands(commands);
 
             IEnumerable<IScenario> scenarios = new List<IScenario>();
@@ -164,18 +109,16 @@ internal class TelegrammBotInit
 
             var handler = new UpdateHandler(
                 botClient,
-                data,
                 Config.ConnectionString,
                 scenarios,
                 scenarioContextRepository,
                 cancellationTokenSource.Token);
-            //await handler.LoadTestDataAsync(data, ct);
-            
+
             botClient.StartReceiving(handler, receiverOptions, cancellationTokenSource.Token);
 
             var me = await botClient.GetMe();
             Console.WriteLine($"{me.FirstName} запущен!");
-            Console.WriteLine($"Нажмите клавишу A для выхода.");
+            Console.WriteLine("Нажмите клавишу A для выхода.");
             await Task.Run(() =>
             {
                 while (true)
@@ -187,14 +130,12 @@ internal class TelegrammBotInit
                         Console.WriteLine("Bot stopping...");
                         break;
                     }
-                    else
-                    {
-                        Console.WriteLine($"Id телеграм бота: {me.Id}.");
-                    }
+
+                    Console.WriteLine($"Id телеграм бота: {me.Id}.");
                 }
             });
 
-            await Task.Delay(-1); // Устанавливаем бесконечную задержку.
+            await Task.Delay(-1);
         }
         catch (InfraBotException ex)
         {
@@ -213,8 +154,6 @@ internal class TelegrammBotInit
         public string Token { get; set; } = "0000000000:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 
         public string ConnectionString { get; set; } =
-            "Host=localhost;Port=5432;Database=Infrabot;Username=postgres;Password=changeme";
+            "Host=localhost;Port=5432;Database=infrabot;Username=postgres;Password=changeme";
     }
 }
-
-
