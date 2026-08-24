@@ -1,6 +1,5 @@
 using InfraBot.Entities;
 using InfraBot.Enums;
-using InfraBot.Scenarios.Tasks.User;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace InfraBot.HelpData;

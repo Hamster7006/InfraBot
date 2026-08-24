@@ -1,5 +1,5 @@
 using InfraBot.Helpers;
-using InfraBot.Infrastracture.Callback;
+using InfraBot.Infrastructure.Callback;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;

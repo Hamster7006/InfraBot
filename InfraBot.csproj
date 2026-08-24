@@ -1,72 +1,18 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <OutputType>Exe</OutputType>
-    <RootNamespace>InfraBot</RootNamespace>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="ZZZOtherData\**" />
-    <Compile Remove="!TESTDATA\**" />
-    <EmbeddedResource Remove="ZZZOtherData\**" />
-    <EmbeddedResource Remove="!TESTDATA\**" />
-    <None Remove="ZZZOtherData\**" />
-    <None Remove="!TESTDATA\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="C:\Users\Alkesandr\AppData\Local\Temp\cursor-sandbox-cache\e8bc6d7cfdf1fe5a88f3cef76289b688\nuget\linq2db.postgresql\6.3.0\contentFiles\any\any\LinqToDB.Templates\CopyMe.PostgreSQL.tt.txt" />
-    <None Remove="C:\Users\Alkesandr\AppData\Local\Temp\cursor-sandbox-cache\e8bc6d7cfdf1fe5a88f3cef76289b688\nuget\linq2db.postgresql\6.3.0\contentFiles\any\any\LinqToDB.Templates\DataAnnotations.ttinclude" />
-    <None Remove="C:\Users\Alkesandr\AppData\Local\Temp\cursor-sandbox-cache\e8bc6d7cfdf1fe5a88f3cef76289b688\nuget\linq2db.postgresql\6.3.0\contentFiles\any\any\LinqToDB.Templates\DataModel.ttinclude" />
-    <None Remove="C:\Users\Alkesandr\AppData\Local\Temp\cursor-sandbox-cache\e8bc6d7cfdf1fe5a88f3cef76289b688\nuget\linq2db.postgresql\6.3.0\contentFiles\any\any\LinqToDB.Templates\EditableObject.ttinclude" />
-    <None Remove="C:\Users\Alkesandr\AppData\Local\Temp\cursor-sandbox-cache\e8bc6d7cfdf1fe5a88f3cef76289b688\nuget\linq2db.postgresql\6.3.0\contentFiles\any\any\LinqToDB.Templates\Equatable.ttinclude" />
-    <None Remove="C:\Users\Alkesandr\AppData\Local\Temp\cursor-sandbox-cache\e8bc6d7cfdf1fe5a88f3cef76289b688\nuget\linq2db.postgresql\6.3.0\contentFiles\any\any\LinqToDB.Templates\Humanizer.ttinclude" />
-    <None Remove="C:\Users\Alkesandr\AppData\Local\Temp\cursor-sandbox-cache\e8bc6d7cfdf1fe5a88f3cef76289b688\nuget\linq2db.postgresql\6.3.0\contentFiles\any\any\LinqToDB.Templates\LinqToDB.PostgreSQL.Tools.ttinclude" />
-    <None Remove="C:\Users\Alkesandr\AppData\Local\Temp\cursor-sandbox-cache\e8bc6d7cfdf1fe5a88f3cef76289b688\nuget\linq2db.postgresql\6.3.0\contentFiles\any\any\LinqToDB.Templates\LinqToDB.PostgreSQL.ttinclude" />
-    <None Remove="C:\Users\Alkesandr\AppData\Local\Temp\cursor-sandbox-cache\e8bc6d7cfdf1fe5a88f3cef76289b688\nuget\linq2db.postgresql\6.3.0\contentFiles\any\any\LinqToDB.Templates\LinqToDB.Tools.ttinclude" />
-    <None Remove="C:\Users\Alkesandr\AppData\Local\Temp\cursor-sandbox-cache\e8bc6d7cfdf1fe5a88f3cef76289b688\nuget\linq2db.postgresql\6.3.0\contentFiles\any\any\LinqToDB.Templates\LinqToDB.ttinclude" />
-    <None Remove="C:\Users\Alkesandr\AppData\Local\Temp\cursor-sandbox-cache\e8bc6d7cfdf1fe5a88f3cef76289b688\nuget\linq2db.postgresql\6.3.0\contentFiles\any\any\LinqToDB.Templates\MultipleFiles.ttinclude" />
-    <None Remove="C:\Users\Alkesandr\AppData\Local\Temp\cursor-sandbox-cache\e8bc6d7cfdf1fe5a88f3cef76289b688\nuget\linq2db.postgresql\6.3.0\contentFiles\any\any\LinqToDB.Templates\NotifyDataErrorInfo.ttinclude" />
-    <None Remove="C:\Users\Alkesandr\AppData\Local\Temp\cursor-sandbox-cache\e8bc6d7cfdf1fe5a88f3cef76289b688\nuget\linq2db.postgresql\6.3.0\contentFiles\any\any\LinqToDB.Templates\NotifyPropertyChanged.ttinclude" />
-    <None Remove="C:\Users\Alkesandr\AppData\Local\Temp\cursor-sandbox-cache\e8bc6d7cfdf1fe5a88f3cef76289b688\nuget\linq2db.postgresql\6.3.0\contentFiles\any\any\LinqToDB.Templates\ObsoleteAttributes.ttinclude" />
-    <None Remove="C:\Users\Alkesandr\AppData\Local\Temp\cursor-sandbox-cache\e8bc6d7cfdf1fe5a88f3cef76289b688\nuget\linq2db.postgresql\6.3.0\contentFiles\any\any\LinqToDB.Templates\PluralizationService.ttinclude" />
-    <None Remove="C:\Users\Alkesandr\AppData\Local\Temp\cursor-sandbox-cache\e8bc6d7cfdf1fe5a88f3cef76289b688\nuget\linq2db.postgresql\6.3.0\contentFiles\any\any\LinqToDB.Templates\README.md" />
-    <None Remove="C:\Users\Alkesandr\AppData\Local\Temp\cursor-sandbox-cache\e8bc6d7cfdf1fe5a88f3cef76289b688\nuget\linq2db.postgresql\6.3.0\contentFiles\any\any\LinqToDB.Templates\T4Model.ttinclude" />
-    <None Remove="C:\Users\Alkesandr\AppData\Local\Temp\cursor-sandbox-cache\e8bc6d7cfdf1fe5a88f3cef76289b688\nuget\linq2db.postgresql\6.3.0\contentFiles\any\any\LinqToDB.Templates\Validation.ttinclude" />
-    <None Remove="C:\Users\Alkesandr\AppData\Local\Temp\cursor-sandbox-cache\f80fa44df4a7cdd4845aa020957fdeb1\nuget\linq2db.postgresql\6.3.0\contentFiles\any\any\LinqToDB.Templates\CopyMe.PostgreSQL.tt.txt" />
-    <None Remove="C:\Users\Alkesandr\AppData\Local\Temp\cursor-sandbox-cache\f80fa44df4a7cdd4845aa020957fdeb1\nuget\linq2db.postgresql\6.3.0\contentFiles\any\any\LinqToDB.Templates\DataAnnotations.ttinclude" />
-    <None Remove="C:\Users\Alkesandr\AppData\Local\Temp\cursor-sandbox-cache\f80fa44df4a7cdd4845aa020957fdeb1\nuget\linq2db.postgresql\6.3.0\contentFiles\any\any\LinqToDB.Templates\DataModel.ttinclude" />
-    <None Remove="C:\Users\Alkesandr\AppData\Local\Temp\cursor-sandbox-cache\f80fa44df4a7cdd4845aa020957fdeb1\nuget\linq2db.postgresql\6.3.0\contentFiles\any\any\LinqToDB.Templates\EditableObject.ttinclude" />
-    <None Remove="C:\Users\Alkesandr\AppData\Local\Temp\cursor-sandbox-cache\f80fa44df4a7cdd4845aa020957fdeb1\nuget\linq2db.postgresql\6.3.0\contentFiles\any\any\LinqToDB.Templates\Equatable.ttinclude" />
-    <None Remove="C:\Users\Alkesandr\AppData\Local\Temp\cursor-sandbox-cache\f80fa44df4a7cdd4845aa020957fdeb1\nuget\linq2db.postgresql\6.3.0\contentFiles\any\any\LinqToDB.Templates\Humanizer.ttinclude" />
-    <None Remove="C:\Users\Alkesandr\AppData\Local\Temp\cursor-sandbox-cache\f80fa44df4a7cdd4845aa020957fdeb1\nuget\linq2db.postgresql\6.3.0\contentFiles\any\any\LinqToDB.Templates\LinqToDB.PostgreSQL.Tools.ttinclude" />
-    <None Remove="C:\Users\Alkesandr\AppData\Local\Temp\cursor-sandbox-cache\f80fa44df4a7cdd4845aa020957fdeb1\nuget\linq2db.postgresql\6.3.0\contentFiles\any\any\LinqToDB.Templates\LinqToDB.PostgreSQL.ttinclude" />
-    <None Remove="C:\Users\Alkesandr\AppData\Local\Temp\cursor-sandbox-cache\f80fa44df4a7cdd4845aa020957fdeb1\nuget\linq2db.postgresql\6.3.0\contentFiles\any\any\LinqToDB.Templates\LinqToDB.Tools.ttinclude" />
-    <None Remove="C:\Users\Alkesandr\AppData\Local\Temp\cursor-sandbox-cache\f80fa44df4a7cdd4845aa020957fdeb1\nuget\linq2db.postgresql\6.3.0\contentFiles\any\any\LinqToDB.Templates\LinqToDB.ttinclude" />
-    <None Remove="C:\Users\Alkesandr\AppData\Local\Temp\cursor-sandbox-cache\f80fa44df4a7cdd4845aa020957fdeb1\nuget\linq2db.postgresql\6.3.0\contentFiles\any\any\LinqToDB.Templates\MultipleFiles.ttinclude" />
-    <None Remove="C:\Users\Alkesandr\AppData\Local\Temp\cursor-sandbox-cache\f80fa44df4a7cdd4845aa020957fdeb1\nuget\linq2db.postgresql\6.3.0\contentFiles\any\any\LinqToDB.Templates\NotifyDataErrorInfo.ttinclude" />
-    <None Remove="C:\Users\Alkesandr\AppData\Local\Temp\cursor-sandbox-cache\f80fa44df4a7cdd4845aa020957fdeb1\nuget\linq2db.postgresql\6.3.0\contentFiles\any\any\LinqToDB.Templates\NotifyPropertyChanged.ttinclude" />
-    <None Remove="C:\Users\Alkesandr\AppData\Local\Temp\cursor-sandbox-cache\f80fa44df4a7cdd4845aa020957fdeb1\nuget\linq2db.postgresql\6.3.0\contentFiles\any\any\LinqToDB.Templates\ObsoleteAttributes.ttinclude" />
-    <None Remove="C:\Users\Alkesandr\AppData\Local\Temp\cursor-sandbox-cache\f80fa44df4a7cdd4845aa020957fdeb1\nuget\linq2db.postgresql\6.3.0\contentFiles\any\any\LinqToDB.Templates\PluralizationService.ttinclude" />
-    <None Remove="C:\Users\Alkesandr\AppData\Local\Temp\cursor-sandbox-cache\f80fa44df4a7cdd4845aa020957fdeb1\nuget\linq2db.postgresql\6.3.0\contentFiles\any\any\LinqToDB.Templates\README.md" />
-    <None Remove="C:\Users\Alkesandr\AppData\Local\Temp\cursor-sandbox-cache\f80fa44df4a7cdd4845aa020957fdeb1\nuget\linq2db.postgresql\6.3.0\contentFiles\any\any\LinqToDB.Templates\T4Model.ttinclude" />
-    <None Remove="C:\Users\Alkesandr\AppData\Local\Temp\cursor-sandbox-cache\f80fa44df4a7cdd4845aa020957fdeb1\nuget\linq2db.postgresql\6.3.0\contentFiles\any\any\LinqToDB.Templates\Validation.ttinclude" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="linq2db" Version="6.3.0" />
-    <PackageReference Include="linq2db.PostgreSQL" Version="6.3.0" />
-    <PackageReference Include="Npgsql" Version="8.0.6" />
-    <PackageReference Include="Telegram.Bot" Version="22.10.2.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="DataBaseCore\" />
-    <Folder Include="Infrastracture\Repository\DB\" />
-    <Folder Include="Infrastracture\Services\" />
-  </ItemGroup>
-
-</Project>
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>InfraBot</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="linq2db" Version="6.3.0" />
+    <PackageReference Include="linq2db.PostgreSQL" Version="6.3.0" />
+    <PackageReference Include="Npgsql" Version="8.0.6" />
+    <PackageReference Include="Telegram.Bot" Version="22.10.2.1" />
+  </ItemGroup>
+
+</Project>

@@ -4,8 +4,8 @@ using InfraBot.Entities;
 using InfraBot.Enums;
 using InfraBot.HelpData;
 using InfraBot.Helpers;
-using InfraBot.Infrastracture.Callback;
-using InfraBot.Infrastracture.Services;
+using InfraBot.Infrastructure.Callback;
+using InfraBot.Infrastructure.Services;
 using InfraBot.Scenarios.Core;
 using InfraBot.Scenarios.Tasks.Script;
 using InfraBot.Scenarios.Tasks.Server;
@@ -176,21 +176,20 @@ internal partial class UpdateHandler
         {
             case ConstantData.Start:
                 if (_userData == null)
-                {
                     _userData = await _botUsersService.RegisterUserAsync(update.Message.From.Id,
                                                                     update.Message.From.Username,
                                                                     ct
                                                                     );
-                    _replyKeyboardMarkup = ConstantData.CreateReplyKeyboardMarkup(_userData);
-                    await _telegramBotClient.SendMessage(chatId,
-                                                ConstantData.ReplaceText($"Доступны новые команды\r\n {ConstantData.HelpData(_userData)}", _userData),
+                _replyKeyboardMarkup = ConstantData.CreateReplyKeyboardMarkup(_userData);
+                await _telegramBotClient.SendMessage(chatId,
+                                                ConstantData.ReplaceText($"Доступны команды\r\n {ConstantData.HelpData(_userData)}", _userData),
                                                 replyMarkup: _replyKeyboardMarkup,
                                                 cancellationToken: ct);
-                }
+                
                 break;
 
             case ConstantData.Pending:
-                if (await CheckAnonimus(_userData, chatId, _replyKeyboardMarkup, ct)) break;
+                if (await CheckAnonymous(_userData, chatId, _replyKeyboardMarkup, ct)) break;
                 if (!ConstantData.CommandsDictionary[$"{text}"].Levels.Contains(_userData.Status))
                 {
                     await SendErrorComand(chatId, text, _userData, _replyKeyboardMarkup, ct);
@@ -201,7 +200,7 @@ internal partial class UpdateHandler
                 break;
 
             case ConstantData.ListServers:
-                if (await CheckAnonimus(_userData, chatId, _replyKeyboardMarkup, ct)) break;
+                if (await CheckAnonymous(_userData, chatId, _replyKeyboardMarkup, ct)) break;
                 if (!ConstantData.CommandsDictionary[$"{text}"].Levels.Contains(_userData.Status))
                 {
                     await SendErrorComand(chatId, text, _userData, _replyKeyboardMarkup, ct);
@@ -213,7 +212,7 @@ internal partial class UpdateHandler
                 break;
 
             case ConstantData.ListScripts:
-                if (await CheckAnonimus(_userData, chatId, _replyKeyboardMarkup, ct)) break;
+                if (await CheckAnonymous(_userData, chatId, _replyKeyboardMarkup, ct)) break;
                 if (!ConstantData.CommandsDictionary[$"{text}"].Levels.Contains(_userData.Status))
                 {
                     await SendErrorComand(chatId, text, _userData, _replyKeyboardMarkup, ct);
@@ -225,7 +224,7 @@ internal partial class UpdateHandler
                 break;
 
             case ConstantData.PendingRequests:
-                if (await CheckAnonimus(_userData, chatId, _replyKeyboardMarkup, ct)) break;
+                if (await CheckAnonymous(_userData, chatId, _replyKeyboardMarkup, ct)) break;
                 if (!ConstantData.CommandsDictionary[$"{text}"].Levels.Contains(_userData.Status))
                 {
                     await SendErrorComand(chatId, text, _userData, _replyKeyboardMarkup, ct);
@@ -237,7 +236,7 @@ internal partial class UpdateHandler
                 break;
 
             case ConstantData.AddServer:
-                if (await CheckAnonimus(_userData, chatId, _replyKeyboardMarkup, ct)) break;
+                if (await CheckAnonymous(_userData, chatId, _replyKeyboardMarkup, ct)) break;
                 if (!ConstantData.CommandsDictionary[$"{text}"].Levels.Contains(_userData.Status))
                 {
                     await SendErrorComand(chatId, text, _userData, _replyKeyboardMarkup, ct);
@@ -251,7 +250,7 @@ internal partial class UpdateHandler
                 break;
 
             case ConstantData.AddScript:
-                if (await CheckAnonimus(_userData, chatId, _replyKeyboardMarkup, ct)) break;
+                if (await CheckAnonymous(_userData, chatId, _replyKeyboardMarkup, ct)) break;
                 if (!ConstantData.CommandsDictionary[$"{text}"].Levels.Contains(_userData.Status))
                 {
                     await SendErrorComand(chatId, text, _userData, _replyKeyboardMarkup, ct);
@@ -265,7 +264,7 @@ internal partial class UpdateHandler
                 break;
 
             case ConstantData.ListSvcAccounts:
-                if (await CheckAnonimus(_userData, chatId, _replyKeyboardMarkup, ct)) break;
+                if (await CheckAnonymous(_userData, chatId, _replyKeyboardMarkup, ct)) break;
                 if (!ConstantData.CommandsDictionary[$"{text}"].Levels.Contains(_userData.Status))
                 {
                     await SendErrorComand(chatId, text, _userData, _replyKeyboardMarkup, ct);
@@ -277,7 +276,7 @@ internal partial class UpdateHandler
                 break;
 
             case ConstantData.AddSvcAccount:
-                if (await CheckAnonimus(_userData, chatId, _replyKeyboardMarkup, ct)) break;
+                if (await CheckAnonymous(_userData, chatId, _replyKeyboardMarkup, ct)) break;
                 if (!ConstantData.CommandsDictionary[$"{text}"].Levels.Contains(_userData.Status))
                 {
                     await SendErrorComand(chatId, text, _userData, _replyKeyboardMarkup, ct);
@@ -291,7 +290,7 @@ internal partial class UpdateHandler
                 break;
 
             case ConstantData.UserControl:
-                if (await CheckAnonimus(_userData, chatId, _replyKeyboardMarkup, ct)) break;
+                if (await CheckAnonymous(_userData, chatId, _replyKeyboardMarkup, ct)) break;
                 if (!ConstantData.CommandsDictionary[$"{text}"].Levels.Contains(_userData.Status))
                 {
                     await SendErrorComand(chatId, text, _userData, _replyKeyboardMarkup, ct);
@@ -321,7 +320,7 @@ internal partial class UpdateHandler
                 break;
 
             case ConstantData.AdminControl:
-                if (await CheckAnonimus(_userData, chatId, _replyKeyboardMarkup, ct)) break;
+                if (await CheckAnonymous(_userData, chatId, _replyKeyboardMarkup, ct)) break;
                 if (!ConstantData.CommandsDictionary[text].Levels.Contains(_userData!.Status))
                 {
                     await SendErrorComand(chatId, text, _userData, _replyKeyboardMarkup, ct);
@@ -338,7 +337,7 @@ internal partial class UpdateHandler
                 break;
 
             case ConstantData.Info:
-                if (await CheckAnonimus(_userData, chatId, _replyKeyboardMarkup, ct)) break;
+                if (await CheckAnonymous(_userData, chatId, _replyKeyboardMarkup, ct)) break;
                 var infoReport = await _userInfoReportService.BuildAsync(_userData!, ct);
                 await _telegramBotClient.SendMessage(
                     chatId,
@@ -348,7 +347,7 @@ internal partial class UpdateHandler
                 break;
 
             case ConstantData.About:
-                if (await CheckAnonimus(_userData, chatId, _replyKeyboardMarkup, ct)) break;
+                if (await CheckAnonymous(_userData, chatId, _replyKeyboardMarkup, ct)) break;
                 await _telegramBotClient.SendMessage(
                     chatId,
                     ConstantData.ReplaceText(ConstantData.AboutData(), _userData),
@@ -356,12 +355,12 @@ internal partial class UpdateHandler
                     cancellationToken: ct);
                 break;
             case ConstantData.Report:
-                if (await CheckAnonimus(_userData, chatId, _replyKeyboardMarkup, ct)) break;
+                if (await CheckAnonymous(_userData, chatId, _replyKeyboardMarkup, ct)) break;
                 await SendJobReportAsync(allJobs: false, chatId, ct);
                 break;
 
             case ConstantData.ReportAll:
-                if (await CheckAnonimus(_userData, chatId, _replyKeyboardMarkup, ct)) break;
+                if (await CheckAnonymous(_userData, chatId, _replyKeyboardMarkup, ct)) break;
                 if (_userData!.Status != UserStatus.Admin)
                 {
                     await _telegramBotClient.SendMessage(

@@ -23,89 +23,89 @@ internal partial class ConstantData
     internal const string Report = "/report";
     internal const string ReportAll = "/reportall";
 
-    internal static readonly Dictionary<string, CommndsData> CommandsDictionary = new()
+    internal static readonly Dictionary<string, CommandsData> CommandsDictionary = new()
     {
-        [Start] = new CommndsData
+        [Start] = new CommandsData
         {
             Description = "Регистрация и авторизация",
             Levels = [UserStatus.Guest, UserStatus.Operator, UserStatus.Admin]
         },
-        [Pending] = new CommndsData
+        [Pending] = new CommandsData
         {
             Description = "Запрос повышения роли (Guest → Operator)",
             Levels = [UserStatus.Guest]
         },
-        [ListServers] = new CommndsData
+        [ListServers] = new CommandsData
         {
             Description = "Список доступных серверов",
             Levels = [UserStatus.Operator, UserStatus.Admin]
         },
-        [ListScripts] = new CommndsData
+        [ListScripts] = new CommandsData
         {
             Description = "Список скриптов",
             Levels = [UserStatus.Admin]
         },
-        [PendingRequests] = new CommndsData
+        [PendingRequests] = new CommandsData
         {
             Description = "Заявки на повышение роли",
             Levels = [UserStatus.Admin]
         },
-        [AddServer] = new CommndsData
+        [AddServer] = new CommandsData
         {
             Description = "Добавление сервера",
             Levels = [UserStatus.Admin]
         },
-        [AddScript] = new CommndsData
+        [AddScript] = new CommandsData
         {
             Description = "Добавление скрипта",
             Levels = [UserStatus.Admin]
         },
-        [ListSvcAccounts] = new CommndsData
+        [ListSvcAccounts] = new CommandsData
         {
             Description = "Список WinRM учётных записей",
             Levels = [UserStatus.Admin]
         },
-        [AddSvcAccount] = new CommndsData
+        [AddSvcAccount] = new CommandsData
         {
             Description = "Добавление WinRM учётной записи",
             Levels = [UserStatus.Admin]
         },
-        [UserControl] = new CommndsData
+        [UserControl] = new CommandsData
         {
             Description = "Управление пользователями",
             Levels = [UserStatus.Admin]
         },
-        [AdminControl] = new CommndsData
+        [AdminControl] = new CommandsData
         {
             Description = "Модуль администрирования",
             Levels = [UserStatus.Admin]
         },
-        [Cancel] = new CommndsData
+        [Cancel] = new CommandsData
         {
             Description = "Отмена текущего сценария",
             Levels = [UserStatus.Guest, UserStatus.Operator, UserStatus.Admin]
         },
-        [Help] = new CommndsData
+        [Help] = new CommandsData
         {
             Description = "Список доступных команд",
             Levels = [UserStatus.Guest, UserStatus.Operator, UserStatus.Admin]
         },
-        [Info] = new CommndsData
+        [Info] = new CommandsData
         {
             Description = "Информация о вашем профиле",
             Levels = [UserStatus.Guest, UserStatus.Operator, UserStatus.Admin]
         },
-        [About] = new CommndsData
+        [About] = new CommandsData
         {
             Description = "О боте",
             Levels = [UserStatus.Guest, UserStatus.Operator, UserStatus.Admin]
         },
-        [Report] = new CommndsData
+        [Report] = new CommandsData
         {
             Description = "Отчёт по вашим запускам (7 дней)",
             Levels = [UserStatus.Operator, UserStatus.Admin]
         },
-        [ReportAll] = new CommndsData
+        [ReportAll] = new CommandsData
         {
             Description = "Отчёт по всем запускам (7 дней)",
             Levels = [UserStatus.Admin]

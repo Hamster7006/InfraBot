@@ -1,8 +1,9 @@
-﻿using InfraBot.Core.Interface.Repository;
+using InfraBot.Core.Interface.Repository;
 using InfraBot.Core.Interface.Services;
 using InfraBot.Entities;
 using InfraBot.HelpData;
-using InfraBot.Infrastracture.Services;
+using InfraBot.Infrastructure.Repository;
+using InfraBot.Infrastructure.Services;
 using InfraBot.Scenarios.Core;
 using Telegram.Bot;
 using Telegram.Bot.Polling;
@@ -41,8 +42,7 @@ namespace InfraBot.TelegramBot
 
         public UpdateHandler(
             ITelegramBotClient telegramBotClient,
-            int data,
-            string? connectionString,
+            string connectionString,
             IEnumerable<IScenario> scenarios,
             IScenarioContextRepository scenarioContextRepository,
             CancellationToken ct)
@@ -51,12 +51,11 @@ namespace InfraBot.TelegramBot
             _scenarioContextRepository = scenarioContextRepository;
             _scenarios = scenarios;
 
-            var constantDataGenerateRandom = new ConstantDataGenerateRandom();
             (IBotUserRepository botUserRepository,
                 IServerRepository serverRepository,
                 IScriptRepository scriptRepository,
                 IJobRunRepository jobRunRepository,
-                ISvcSamAccountRepository svcRepository) = constantDataGenerateRandom.SwitchMemory(data, connectionString);
+                ISvcSamAccountRepository svcRepository) = RepositoryFactory.Create(connectionString);
             _serverRepository = serverRepository;
             _scriptRepository = scriptRepository;
             _botUserRepository = botUserRepository;

@@ -1,9 +1,8 @@
-﻿using InfraBot.Core.Interface.Services;
+using InfraBot.Core.Interface.Services;
 using InfraBot.Enums;
 using InfraBot.HelpData;
 using InfraBot.Helpers;
 using InfraBot.Scenarios.Core;
-using InfraBot.Scenarios.Tasks.User;
 using InfraBot.TelegramBot;
 using System.Text.RegularExpressions;
 using Telegram.Bot;
@@ -454,7 +453,7 @@ internal sealed class UpdateServerScenario : IScenario
         {
             var granted = server.GrantedUserIds.Contains(target.Id);
             var prefix = granted ? "✅ " : "⬜ ";
-            var label = $"{prefix}{UserControlScenario.FormatUserLabel(target)}";
+            var label = $"{prefix}{BotUserFormatter.FormatUserLabel(target)}";
             keyboard.AddNewRow(
                 InlineKeyboardButton.WithCallbackData(label, $"{AccessTogglePrefix}{target.Id}"));
         }

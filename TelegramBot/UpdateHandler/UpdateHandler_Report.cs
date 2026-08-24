@@ -1,4 +1,4 @@
-﻿using InfraBot.Entities;
+using InfraBot.Entities;
 using InfraBot.Enums;
 using InfraBot.HelpData;
 using System.Text;
