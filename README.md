@@ -43,10 +43,9 @@ InfraBot — это точка входа для инженеров и опер�
 
 ### Хранение данных
 - PostgreSQL — единственное хранилище (JSON/file-storage удалён)
-- Схема БД: `SQL/InfraBotDb.sql`
 - Доступ через LinqToDB (репозитории `Sql*Repository`)
 - Конфигурация подключения в `config.json` (токен бота + connection string)
-- Статические тестовые данные: `SQL/InfraBotSeedData.sql`
+- SQL-скрипты в каталоге `SQL/` (см. раздел «База данных» в быстром старте)
 
 ### UI/UX Telegram
 - Reply-клавиатура по роли, inline-кнопки для списков и карточек
@@ -73,7 +72,7 @@ InfraBot/
 ├── TelegramBot/           # UpdateHandler, инициализация бота
 ├── HelpData/              # Команды, клавиатуры, тексты
 ├── Helpers/               # Форматирование, утилиты
-├── SQL/                   # Схема и seed-данные
+├── SQL/                   # Схема, seed и очистка данных
 ├── Program.cs
 └── config.json            # Локальный конфиг (не в git)
 ```
@@ -82,20 +81,44 @@ InfraBot/
 
 ### 1. База данных
 
+Создание БД и таблиц (один раз):
+
 ```powershell
 psql -U postgres -d postgres -f SQL/InfraBotDb.sql
 ```
 
-Опционально — тестовые данные. Параметры — в `INSERT INTO seed_params` в начале `SQL/InfraBotSeedData.sql`:
+| Файл | Назначение |
+|------|------------|
+| `SQL/InfraBotDb.sql` | Создание БД `infrabot` и схемы таблиц |
+| `SQL/InfraBotSeedData.sql` | Тестовые данные (перед загрузкой делает `TRUNCATE`) |
+| `SQL/InfraBotClearData.sql` | Очистка всех таблиц без удаления схемы |
+
+Скрипты seed и очистки можно выполнять в **pgAdmin → Query Tool** на базе `infrabot` (F5) или через `psql`:
 
 ```powershell
+# только очистка
+psql -U postgres -d infrabot -f SQL/InfraBotClearData.sql
+
+# тестовые данные (очистка + загрузка)
 psql -U postgres -d infrabot -f SQL/InfraBotSeedData.sql
 ```
 
-Или откройте файл в **pgAdmin → Query Tool** на базе `infrabot` и выполните (F5).
+**Параметры seed** — блок `INSERT INTO seed_params` в начале `SQL/InfraBotSeedData.sql`:
 
-> Seed перезаписывает все таблицы (`TRUNCATE`). Admin в seed: `telegram_id = 1000001`.  
-> Для своего аккаунта назначьте Admin вручную: `UPDATE bot_users SET status = 0 WHERE telegram_id = <ваш_id>;`
+| Параметр | По умолчанию | Описание |
+|----------|--------------|----------|
+| `admin_users` | 1 | Пользователи с ролью Admin |
+| `operator_users` | 3 | Operator |
+| `guest_users` | 1 | Guest |
+| `server_count` | 15 | Серверы |
+| `common_script_count` | 1 | Общие скрипты |
+| `personal_script_count` | 15 | Личные скрипты (`srv-N-check`) |
+| `svc_account_count` | 2 | WinRM-УЗ |
+| `jobs_per_server_user` | 2 | Задач на пару (сервер × пользователь) |
+
+> Admin в seed: `telegram_id = 1000001`.  
+> Для своего аккаунта: `UPDATE bot_users SET status = 0 WHERE telegram_id = <ваш_id>;`  
+> Job runs в seed создаются с датой `NOW() - 3 days`, чтобы попадать в отчёты за 7 дней.
 
 ### 2. Конфигурация
 
@@ -107,14 +130,6 @@ psql -U postgres -d infrabot -f SQL/InfraBotSeedData.sql
   "connectionString": "Host=localhost;Port=5432;Database=infrabot;Username=postgres;Password=..."
 }
 ```
-
-### 3. Запуск
-
-```powershell
-dotnet run --project InfraBot.csproj
-```
-
-Остановка: нажать **A** в консоли.
 
 ## Роли и команды
 
