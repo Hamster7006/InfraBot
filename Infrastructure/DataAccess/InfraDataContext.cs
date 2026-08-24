@@ -2,7 +2,7 @@ using LinqToDB;
 using LinqToDB.Data;
 using InfraBot.Core.DataAccess.Models;
 
-namespace InfraBot.Infrastracture.DataAccess;
+namespace InfraBot.Infrastructure.DataAccess;
 
 internal sealed class InfraDataContext : DataConnection
 {

@@ -3,11 +3,11 @@ using InfraBot.Core.Interface.Services;
 using InfraBot.Entities;
 using InfraBot.Enums;
 using InfraBot.HelpData;
-using InfraBot.Infrastracture.Callback;
+using InfraBot.Helpers;
+using InfraBot.Infrastructure.Callback;
 using InfraBot.Scenarios.Core;
 using InfraBot.Scenarios.Tasks.JobRun;
 using InfraBot.Scenarios.Tasks.Server;
-using InfraBot.Scenarios.Tasks.User;
 using System.Linq;
 using System.Text;
 using Telegram.Bot;
@@ -64,7 +64,7 @@ namespace InfraBot.TelegramBot
                     foreach (var userId in server.GrantedUserIds)
                     {
                         var grantedUser = await _botUsersService.GetUserByIdAsync(userId, ct);
-                        grantedLabels.Add(UserControlScenario.FormatUserLabel(grantedUser));
+                        grantedLabels.Add(BotUserFormatter.FormatUserLabel(grantedUser));
                     }
 
                     detailText.AppendLine($"Доступ ({server.GrantedUserIds.Count}): {string.Join(", ", grantedLabels)}");

@@ -1,4 +1,4 @@
-﻿namespace InfraBot.Entities;
+namespace InfraBot.Entities;
 
 /// <summary>
 /// Учётная запись домена для WinRM-подключения к серверу.

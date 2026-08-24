@@ -9,13 +9,13 @@ using Telegram.Bot.Types.Enums;
 
 namespace InfraBot.TelegramBot;
 
-internal class TelegrammBotInit
+internal class TelegramBotInit
 {
     private const string ConfigFilePath = "config.json";
 
     public ConfigData Config { get; private set; } = null!;
 
-    public async Task StartTelegrammBotInitAsync(CancellationToken ct = default)
+    public async Task StartTelegramBotInitAsync(CancellationToken ct = default)
     {
         var configDirectory = Path.GetDirectoryName(ConfigFilePath);
         if (!string.IsNullOrEmpty(configDirectory) && !Directory.Exists(configDirectory))

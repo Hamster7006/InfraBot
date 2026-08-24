@@ -1,6 +1,6 @@
 using InfraBot.Entities;
 using InfraBot.Enums;
-using InfraBot.Scenarios.Tasks.User;
+using InfraBot.Helpers;
 
 namespace InfraBot.HelpData;
 
@@ -28,7 +28,7 @@ internal partial class ConstantData
 
             return $"Имя: {label}\r\n" +
                    $"Telegram ID: {user.TelegramId}\r\n" +
-                   $"Роль: {UserControlScenario.FormatUserStatus(user.Status)}\r\n" +
+                   $"Роль: {BotUserFormatter.FormatUserStatus(user.Status)}\r\n" +
                    $"Доступные сервера: {report.AccessibleServersCount}\r\n" +
                    $"Запущено скриптов: {report.JobRunsCount}";
         }

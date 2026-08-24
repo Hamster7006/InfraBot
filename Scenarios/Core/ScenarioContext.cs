@@ -22,8 +22,6 @@ public enum ScenarioType
     DeleteSvcSamAccount,
     /// <summary>Запуск скрипта на сервере (JobRun).</summary>
     RunJob,
-    /// <summary>Управление пользователями (/usercontrol).</summary>
-    User,
 }
 
 /// <summary>Операция внутри сценария (хранится в <see cref="ScenarioContext.Data"/>).</summary>

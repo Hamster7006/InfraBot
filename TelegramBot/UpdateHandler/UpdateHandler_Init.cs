@@ -1,9 +1,9 @@
-﻿using InfraBot.Core.Interface.Repository;
+using InfraBot.Core.Interface.Repository;
 using InfraBot.Core.Interface.Services;
 using InfraBot.Entities;
 using InfraBot.HelpData;
-using InfraBot.Infrastracture.Repository;
-using InfraBot.Infrastracture.Services;
+using InfraBot.Infrastructure.Repository;
+using InfraBot.Infrastructure.Services;
 using InfraBot.Scenarios.Core;
 using Telegram.Bot;
 using Telegram.Bot.Polling;

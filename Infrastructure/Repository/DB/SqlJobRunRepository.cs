@@ -1,11 +1,11 @@
 using InfraBot.Core.Interface.Repository;
 using InfraBot.Entities;
 using InfraBot.HelpData;
-using InfraBot.Infrastracture.DataAccess;
+using InfraBot.Infrastructure.DataAccess;
 using LinqToDB;
 using LinqToDB.Async;
 
-namespace InfraBot.Infrastracture.Repository.DB;
+namespace InfraBot.Infrastructure.Repository.DB;
 
 internal sealed class SqlJobRunRepository : IJobRunRepository
 {

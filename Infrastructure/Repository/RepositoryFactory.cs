@@ -1,8 +1,8 @@
 using InfraBot.Core.Interface.Repository;
-using InfraBot.Infrastracture.DataAccess;
-using InfraBot.Infrastracture.Repository.DB;
+using InfraBot.Infrastructure.DataAccess;
+using InfraBot.Infrastructure.Repository.DB;
 
-namespace InfraBot.Infrastracture.Repository;
+namespace InfraBot.Infrastructure.Repository;
 
 internal static class RepositoryFactory
 {
@@ -15,7 +15,6 @@ internal static class RepositoryFactory
     ) Create(string connectionString)
     {
         var dataContextFactory = new DataContextFactory(connectionString);
-        dataContextFactory.CreateDataContext();
 
         return (
             new SqlBotUserRepository(dataContextFactory),

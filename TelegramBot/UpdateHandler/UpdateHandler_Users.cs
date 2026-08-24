@@ -1,9 +1,9 @@
-﻿using InfraBot.Core.Exceptions;
+using InfraBot.Core.Exceptions;
 using InfraBot.Entities;
 using InfraBot.Enums;
 using InfraBot.HelpData;
-using InfraBot.Infrastracture.Callback;
-using InfraBot.Scenarios.Tasks.User;
+using InfraBot.Infrastructure.Callback;
+using InfraBot.Helpers;
 using System.Linq;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -138,7 +138,7 @@ internal partial class UpdateHandler
 
             var callback = $"setuserstatus|{user.Id}|{(int)status}";
             inlineKeyboard.AddNewRow(
-                InlineKeyboardButton.WithCallbackData(UserControlScenario.FormatUserStatus(status), callback));
+                InlineKeyboardButton.WithCallbackData(BotUserFormatter.FormatUserStatus(status), callback));
         }
 
         inlineKeyboard.AddNewRow(
@@ -150,8 +150,8 @@ internal partial class UpdateHandler
             callbackQuery.Message.Chat,
             callbackQuery.Message.MessageId,
             ConstantData.ReplaceText(
-                $"Изменение роли: {UserControlScenario.FormatUserLabel(user)}\r\n" +
-                $"Текущая роль: {UserControlScenario.FormatUserStatus(user.Status)}\r\n\r\n" +
+                $"Изменение роли: {BotUserFormatter.FormatUserLabel(user)}\r\n" +
+                $"Текущая роль: {BotUserFormatter.FormatUserStatus(user.Status)}\r\n\r\n" +
                 "Выберите новую роль:",
                 _userData),
             replyMarkup: inlineKeyboard,
@@ -199,7 +199,7 @@ internal partial class UpdateHandler
 
             await _telegramBotClient.SendMessage(
                 user.TelegramId,
-                $"Ваша роль изменена: {UserControlScenario.FormatUserStatus(oldStatus)} → {UserControlScenario.FormatUserStatus(newStatus)}.",
+                $"Ваша роль изменена: {BotUserFormatter.FormatUserStatus(oldStatus)} → {BotUserFormatter.FormatUserStatus(newStatus)}.",
                 replyMarkup: ConstantData.CreateReplyKeyboardMarkup(
                     await _botUsersService.GetUserAsync(user.TelegramId, ct)),
                 cancellationToken: ct);
@@ -266,7 +266,7 @@ internal partial class UpdateHandler
         {
             // ⏳ — активная заявка на повышение, иначе emoji текущей роли
             var prefix = user.Pending == UserPending.Pending ? "⏳ " : GetStatusEmoji(user.Status);
-            var label = $"{prefix}{UserControlScenario.FormatUserLabel(user)}";
+            var label = $"{prefix}{BotUserFormatter.FormatUserLabel(user)}";
             var callback = $"{"showuserdetail"}|{user.Id}";
             result.Add(new KeyValuePair<string, string>(label, callback));
         }
@@ -284,9 +284,9 @@ internal partial class UpdateHandler
 
     private static string BuildUserDetailText(BotUser user)
     {
-        var text = $"Пользователь: {UserControlScenario.FormatUserLabel(user)}\r\n" +
+        var text = $"Пользователь: {BotUserFormatter.FormatUserLabel(user)}\r\n" +
                    $"Telegram ID: {user.TelegramId}\r\n" +
-                   $"Роль: {UserControlScenario.FormatUserStatus(user.Status)}";
+                   $"Роль: {BotUserFormatter.FormatUserStatus(user.Status)}";
 
         if (user.Pending == UserPending.Pending && user.Status == UserStatus.Guest)
         {

@@ -23,7 +23,7 @@ namespace InfraBot.TelegramBot
                 cancellationToken: ct);
         }
 
-        internal async Task<bool> CheckAnonimus(BotUser? userData, Chat chat, ReplyKeyboardMarkup replyKeyboardMarkup, CancellationToken ct)
+        internal async Task<bool> CheckAnonymous(BotUser? userData, Chat chat, ReplyKeyboardMarkup replyKeyboardMarkup, CancellationToken ct)
         {
             if (userData == null)
             {

@@ -3,7 +3,7 @@ using InfraBot.Core.Interface.Repository;
 using InfraBot.Core.Interface.Services;
 using InfraBot.Entities;
 
-namespace InfraBot.Infrastracture.Services;
+namespace InfraBot.Infrastructure.Services;
 
 internal sealed class SvcSamAccountService : ISvcSamAccountService
 {

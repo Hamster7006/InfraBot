@@ -1,6 +1,6 @@
 using InfraBot.Enums;
 using InfraBot.HelpData;
-using InfraBot.Infrastracture.Callback;
+using InfraBot.Infrastructure.Callback;
 using InfraBot.Scenarios.Core;
 using InfraBot.Scenarios.Tasks.SvcSamAccount;
 using System.Linq;

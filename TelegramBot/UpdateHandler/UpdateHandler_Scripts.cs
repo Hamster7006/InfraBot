@@ -1,6 +1,6 @@
-﻿using InfraBot.Entities;
+using InfraBot.Entities;
 using InfraBot.HelpData;
-using InfraBot.Infrastracture.Callback;
+using InfraBot.Infrastructure.Callback;
 using InfraBot.Scenarios.Core;
 using InfraBot.Scenarios.Tasks.Script;
 using System.Linq;

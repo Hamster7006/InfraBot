@@ -1,4 +1,4 @@
-namespace InfraBot.Infrastracture.DataAccess;
+namespace InfraBot.Infrastructure.DataAccess;
 
 internal sealed class DataContextFactory : IDataContextFactory<InfraDataContext>
 {

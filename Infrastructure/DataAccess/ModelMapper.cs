@@ -1,7 +1,7 @@
 using InfraBot.Core.DataAccess.Models;
 using InfraBot.Entities;
 
-namespace InfraBot.Infrastracture.DataAccess;
+namespace InfraBot.Infrastructure.DataAccess;
 
 internal static class ModelMapper
 {

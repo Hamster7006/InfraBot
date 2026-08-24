@@ -1,6 +1,6 @@
 using LinqToDB.Data;
 
-namespace InfraBot.Infrastracture.DataAccess;
+namespace InfraBot.Infrastructure.DataAccess;
 
 internal interface IDataContextFactory<TDataContext>
     where TDataContext : DataConnection

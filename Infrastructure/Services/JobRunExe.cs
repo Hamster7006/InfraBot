@@ -8,7 +8,7 @@ using InfraBot.Enums;
 using InfraBot.Helpers;
 using Telegram.Bot;
 
-namespace InfraBot.Infrastracture.Services;
+namespace InfraBot.Infrastructure.Services;
 
 /// <summary>
 /// Исполнитель JobRun через WinRM. Задачи обрабатываются фоновым worker по одной.

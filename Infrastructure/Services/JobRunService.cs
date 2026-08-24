@@ -4,7 +4,7 @@ using InfraBot.Core.Interface.Services;
 using InfraBot.Entities;
 using Telegram.Bot.Types;
 
-namespace InfraBot.Infrastracture.Services;
+namespace InfraBot.Infrastructure.Services;
 
 internal sealed class JobRunService : IJobRunService
 {
