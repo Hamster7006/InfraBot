@@ -1,5 +1,6 @@
 using InfraBot.Core.Interface.Repository;
 using InfraBot.Entities;
+using InfraBot.HelpData;
 using InfraBot.Infrastracture.DataAccess;
 using LinqToDB;
 using LinqToDB.Async;
@@ -39,7 +40,8 @@ internal sealed class SqlJobRunRepository : IJobRunRepository
     public async Task<IReadOnlyList<JobRun>> ReportAsync(bool allJobs, BotUser user, CancellationToken ct)
     {
         using var db = _factory.CreateDataContext();
-        var query = db.JobRuns.AsQueryable();
+        var since = DateTime.UtcNow.AddDays(-7);
+        var query = db.JobRuns.Where(x => x.CreatedAt >= since);
         if (!allJobs)
             query = query.Where(x => x.InitiatedById == user.Id);
 
